@@ -1,22 +1,15 @@
 import {bootstrap}    from '@angular/platform-browser-dynamic';
 import {AppComponent} from './app.component';
-import { routes, APP_ROUTER_PROVIDERS} from './app.routes';
+import { APP_ROUTER_PROVIDERS} from './app.routes';
 import { APP_BASE_HREF, LocationStrategy, PathLocationStrategy  } from '@angular/common';
 import { provide } from '@angular/core';
 import { provideRouter } from '@angular/router';
-import { AllowActivate, AllowDeactivate, AuthGuard } from './hero.guard';
-import { AuthService } from './auth.service';
 
 bootstrap(AppComponent, [
     APP_ROUTER_PROVIDERS,
-    // provideRouter(routes),
     // { provide: LocationStrategy, useClass: PathLocationStrategy },
     provide(LocationStrategy, { useClass: PathLocationStrategy }),
     { provide: APP_BASE_HREF, useValue: '/' },
-    // AllowActivate,
-    // AllowDeactivate,
-    // AuthGuard,
-    // AuthService,
     //provide(APP_BASE_HREF, { useValue: '.' })
 ]).catch(err => console.error(err));
 

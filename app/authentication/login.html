@@ -1,0 +1,15 @@
+<div class="login center-block col-md-4 ">
+    <h1>登录</h1>
+    <form role="form" (submit)="login($event, username.value, password.value)">
+        <div class="form-group">
+            <label for="username">用户</label>
+            <input type="text" #username class="form-control" id="username" placeholder="Username">
+        </div>
+        <div class="form-group">
+            <label for="password">密码</label>
+            <input type="password" #password class="form-control" id="password" placeholder="Password">
+        </div>
+        <button type="submit" class="btn btn-default">登录</button>
+        <a [routerLink]="['/signup']">注册</a>
+    </form>
+</div>
