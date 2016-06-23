@@ -9,7 +9,7 @@ import { AuthService } from './authentication/auth.service';
   selector: 'my-app',
   template: `
     <h1>Component Router</h1>
-    <h3 *ngIf="currentUser" >当前用户=>{{currentUser}}</h3>
+    <h3 *ngIf="getUser()" >当前用户=>{{currentUser}}</h3>
     <nav>
       <a [routerLink] = "['./crisis-center']" [queryParams]="{name: 'cirsis-center',token:'jwttoken'}" fragment="ccfragment">Crisis Center</a>
       <a [routerLink] = "['./heroes']" [queryParams] = " { name :'Heroes',token:'angular2-jwt-token'}">Heroes</a>
@@ -28,7 +28,7 @@ import { AuthService } from './authentication/auth.service';
      <router-outlet name="header"></router-outlet> 
   `,
   directives: [ROUTER_DIRECTIVES, COMMON_DIRECTIVES],
-  providers: [HeroService, DialogService, AuthService]
+  providers: [HeroService, DialogService]
 })
 export class AppComponent implements OnInit {
   /**
@@ -42,11 +42,15 @@ export class AppComponent implements OnInit {
     this.name = this.router.routerState.queryParams.map(p => p['name']);
     this.token = this.router.routerState.queryParams.map(p => p['token']);
     this.fragment = this.router.routerState.fragment;
-    setInterval(() => {
-      this.currentUser = this.authService.currentUser ? this.authService.currentUser.username : null;
-    }
-      , 50);
 
+  }
+
+  getUser() {
+    let currUser = this.authService.getCurrentUser();
+    if (currUser) {
+      this.currentUser = currUser.username;
+    }
+    return currUser != null;
   }
 
   ngOnInit() {

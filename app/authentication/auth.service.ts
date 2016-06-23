@@ -34,7 +34,7 @@ export class AuthService {
                 this.isLoggedIn = true;
                 let curUser = new User({ username: username, password: password });
                 localStorage.setItem('jwt', JSON.stringify(curUser));
-                this.currentUser = curUser;
+                this.currentUser = curUser;              
             });
     }
 

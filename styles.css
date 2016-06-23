@@ -136,7 +136,35 @@ nav a.router-link-active {
   border-radius: 4px 0 0 4px;
 }
 
+.home {
+    border: 1px solid darken(white, 20%);
+    margin: 20px;
+    padding: 20px;
+    background-color: #f8f8f8;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    -ms-border-radius:10px;
+    border-radius: 10px;
+}
+.main {
+    margin-top: 210px;
+    background-color: rgba(91, 192, 222, 0.8);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+.ng-valid[required] {
+  border-left: 5px solid #42A948; /* green */
+}
+.ng-invalid {
+  border-left: 5px solid #a94442; /* red */
+}
+
+
 /* everywhere else */
 * { 
   font-family: Arial, Helvetica, sans-serif; 
 }
+

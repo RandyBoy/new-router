@@ -3,11 +3,11 @@ import { ROUTER_DIRECTIVES }    from '@angular/router';
 import { CrisisService }        from './crisis.service';
 
 @Component({
-    template: `
+  template: `
     <h2>CRISIS CENTER</h2>
     <router-outlet></router-outlet>
   `,
-    directives: [ROUTER_DIRECTIVES],
-    providers: [CrisisService]
+  directives: [ROUTER_DIRECTIVES],
+  providers: [CrisisService]
 })
 export class CrisisCenterComponent { }

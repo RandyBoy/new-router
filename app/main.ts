@@ -4,9 +4,12 @@ import { APP_ROUTER_PROVIDERS} from './app.routes';
 import { APP_BASE_HREF, LocationStrategy, PathLocationStrategy  } from '@angular/common';
 import { provide } from '@angular/core';
 import { provideRouter } from '@angular/router';
+import { disableDeprecatedForms, provideForms } from '@angular/forms';
 
 bootstrap(AppComponent, [
     APP_ROUTER_PROVIDERS,
+    disableDeprecatedForms(),
+    provideForms(),
     // { provide: LocationStrategy, useClass: PathLocationStrategy },
     provide(LocationStrategy, { useClass: PathLocationStrategy }),
     { provide: APP_BASE_HREF, useValue: '/' },

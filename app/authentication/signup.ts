@@ -19,14 +19,14 @@ export class Signup {
     }
 
     signup(event: any, username: string, password: string, avatar: string): void {
-        event.preventDefault();
+        // event.preventDefault();
         this.authService.signup(username, password, avatar).then(() => {
             this.router.navigateByUrl('/crisis-center');
         });
     }
 
     login(event: any) {
-        event.preventDefault();
+        // event.preventDefault();
         this.router.navigateByUrl('/login');
     }
 }
