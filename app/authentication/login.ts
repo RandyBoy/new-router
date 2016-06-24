@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Router, ROUTER_DIRECTIVES } from '@angular/router';
+import { Router, ROUTER_DIRECTIVES, ActivatedRoute } from '@angular/router';
 import { CORE_DIRECTIVES } from '@angular/common';
 import { FORM_DIRECTIVES, REACTIVE_FORM_DIRECTIVES, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import {AuthService} from './auth.service';
@@ -17,7 +17,11 @@ export class Login {
     loginForm: FormGroup;
     defaultPage: string = '/crisis-center';
     targetPage: string = null;
-    constructor(private router: Router, private authService: AuthService, private builder: FormBuilder) {
+    constructor(
+        private router: Router,
+        private activeRoute: ActivatedRoute,
+        private authService: AuthService,
+        private builder: FormBuilder) {
         this.loginForm = builder.group({
             login: ["", Validators.required],
             passwordRetry: builder.group({
@@ -25,7 +29,7 @@ export class Login {
                 passwordConfirmation: ["", Validators.required]
             })
         });
-        
+
 
         //验证
         // builder.group({
@@ -36,13 +40,18 @@ export class Login {
         //         confirmPassword: ['', Validators.required]
         //     }, { validator: this.areEqual })
         // });
-
-
-        this.router.routerState
-            .queryParams
-            .map(p => p['targetpage']).subscribe(url => {
+        this.activeRoute
+            .params
+            .map(p => p['targetpage'])
+            .subscribe(url => {
                 if (url) this.targetPage = url;
-            });
+            })
+
+        // this.router.routerState
+        //     .queryParams
+        //     .map(p => p['targetpage']).subscribe(url => {
+        //         if (url) this.targetPage = url;
+        //     });
     }
 
     // areEqual(group: FormGroup) {

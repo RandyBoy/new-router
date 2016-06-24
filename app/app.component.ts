@@ -11,28 +11,32 @@ import { AuthService } from './authentication/auth.service';
     <h1>Component Router</h1>
     <h3 *ngIf="getUser()" >当前用户=>{{currentUser}}</h3>
     <nav>
-      <a [routerLink] = "['./crisis-center']" [queryParams]="{name: 'cirsis-center',token:'jwttoken'}" fragment="ccfragment">Crisis Center</a>
-      <a [routerLink] = "['./heroes']" [queryParams] = " { name :'Heroes',token:'angular2-jwt-token'}">Heroes</a>
+      <a [routerLink] = "['/crisis-center']">Crisis Center</a>
+      <a [routerLink] = "['/aux:heroes']" >Heroes</a>
       <a [routerLink] = "['/crisis-center/admin']">Admin</a>
+      <a [routerLink] = "['/crisis-center/aux:admin']">Admin(aux)</a>
       <a [routerLink] = "['/login']">Login</a>
       <a [routerLink] = "['/signup']">Signup</a>
-      <a [routerLink] = "['redirectTo']" >RedirectTo</a>
+      <a [routerLink] = "['redirect']" >RedirectTo</a>
     </nav>
     <ng-container *ngIf="false">
       query: name:{{name | async}}  token:{{token | async}}  fragment: {{fragment | async}}
     </ng-container> 
-    <div >
+    <ng-container>
      <router-outlet></router-outlet>
-    </div>
      <hr>
-     <router-outlet name="header"></router-outlet> 
+     <router-outlet name="aux"></router-outlet> 
+     <hr>
+     <router-outlet name="bottom"></router-outlet> 
+     </ng-container> 
   `,
   directives: [ROUTER_DIRECTIVES, COMMON_DIRECTIVES],
   providers: [HeroService, DialogService]
 })
 export class AppComponent implements OnInit {
   /**
-   *
+   * [queryParams]="{name: 'cirsis-center',token:'jwttoken'}" fragment="ccfragment"
+   * [queryParams] = " { name :'Heroes',token:'angular2-jwt-token'}
    */
   currentUser: any;
   name: Observable<string>;

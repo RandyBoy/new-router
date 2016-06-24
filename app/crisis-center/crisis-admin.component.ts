@@ -15,7 +15,7 @@ import { HeroFormComponent } from '../heros/hero-form.component';
         <h3>FormComponent</h3>
         <hero-form></hero-form>
       </div>
-      
+      <router-outlet></router-outlet>
     </div>
   `,
   directives: [ROUTER_DIRECTIVES, DynamicFormComponent, HeroFormComponent],
@@ -29,5 +29,6 @@ export class CrisisAdminComponent {
    */
   constructor(private questionService: QuestionService) {
     this.questions = questionService.getQuestions();
+    console.log(document.location);
   }
 }

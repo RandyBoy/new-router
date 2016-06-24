@@ -9,15 +9,8 @@ import { LoginRoutes, AUTH_PROVIDERS } from './authentication/login.routes';
 
 export const routes: RouterConfig = [
     ...CrisisCenterRoutes,
-    // { path: 'crisis-center', component: CrisisListComponent, canActivate: [AuthGuard] },
-    // { path: 'heroes', component: HeroListComponent, canActivate: [AllowActivate] },
-    { path: 'redirectTo', redirectTo: 'heroes' },
-    { path: 'notfound', component: NotFoundComponent },
-    // { path: 'login', component: LoginComponent },
     ...LoginRoutes,
-    // { path: 'admin', component: CrisisAdminComponent, canActivate: [AuthGuard] },
     ...HeroesRoutes,
-    // { path: '', component: CrisisListComponent, canActivate: [AuthGuard] },
     { path: '**', component: NotFoundComponent }
 ];
 

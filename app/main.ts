@@ -10,10 +10,10 @@ bootstrap(AppComponent, [
     APP_ROUTER_PROVIDERS,
     disableDeprecatedForms(),
     provideForms(),
-    // { provide: LocationStrategy, useClass: PathLocationStrategy },
-    provide(LocationStrategy, { useClass: PathLocationStrategy }),
-    { provide: APP_BASE_HREF, useValue: '/' },
-    //provide(APP_BASE_HREF, { useValue: '.' })
+    { provide: LocationStrategy, useClass: PathLocationStrategy },
+    // provide(LocationStrategy, { useClass: PathLocationStrategy }),
+    //{ provide: APP_BASE_HREF, useValue: '/' },
+    // provide(APP_BASE_HREF, { useValue: '/' })
 ]).catch(err => console.error(err));
 
 //{provide: 'alwaysTrue', useValue: (a:ActivatedRouteSnapshot, s:RouterStateSnapshot) => true}
