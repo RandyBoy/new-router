@@ -3,9 +3,9 @@
     <form #f="ngForm" (ngSubmit)="login($event, f.value.credentials.username, f.value.credentials.password)">
         <div ngModelGroup="credentials" class="form-group">
             <label for="username">用户</label>
-            <input type="text" name='username' ngModel class="form-control" placeholder="Username">
+            <input type="text" name='username' ngModel required class="form-control" placeholder="Username">
             <label for="password">密码</label>
-            <input type="password" name='password' ngModel class="form-control" placeholder="Password">
+            <input type="password" name='password' ngModel required class="form-control" placeholder="Password">
         </div>
         <button type="submit" class="btn btn-default btn-primary">登录</button>
         <a [routerLink]="['/signup']" class="btn btn-success">注册</a>
@@ -20,7 +20,48 @@
             <p>Password <input type="password" formControlName="password" class="form-control"></p>
             <p>Confirm password <input type="password" formControlName="passwordConfirmation" class="form-control"></p>
         </div>
+        <button type="submit" class="btn btn-default btn-primary" [disabled]="!loginForm?.valid">登录</button>
     </form>
+    <!--.controls['passwordRetry']-->
     <h3>Form value:</h3>
     <pre>{{value}}</pre>
+
+    <h2>Angular forms Example</h2>
+    <form #ff="ngForm">
+        <div ngModelGroup="name" #mgName="ngModelGroup">
+            <h3>Enter your name:</h3>
+            <p>First: <input class="form-control" name="first" ngModel required #spy></p>
+            <br>TODO: remove this: {{spy.className}}
+            <p>Middle: <input class="form-control" name="middle" ngModel></p>
+            <p>Last: <input class="form-control" name="last" ngModel required></p>
+        </div>
+        <h3>Name value:</h3>
+        <pre>{{ mgName.value | json }}</pre>
+        <p>Name is {{mgName?.valid ? "valid" : "invalid"}}</p>
+        <h3>What's your favorite food?</h3>
+        <p><input class="form-control" name="food" ngModel></p>
+        <h3>Form value</h3>
+        <pre>{{ ff.value | json }}</pre>
+    </form>
+    <h2>Bind existing control example</h2>
+    <form>
+        <p>Element with existing control: <input class='form-control' type="text" [formControl]="loginControl" [(ngModel)]='loginModel'></p>
+        <p>Value of existing control: {{loginControl.value}}--{{loginModel}}</p>
+    </form>
+    <h2>Angular FormGroup Example</h2>
+    <form [formGroup]="myForm">
+        <div formGroupName="name" class='form-group'>
+            <h3>Enter your name:</h3>
+            <p>First: <input class='form-control' formControlName="first"></p>
+            <p>Middle: <input class='form-control' formControlName="middle"></p>
+            <p>Last: <input class='form-control' formControlName="last"></p>
+        </div>
+        <h3>Name value:</h3>
+        <pre>{{ nameGroup.value | json }}</pre>
+        <p>Name is {{nameGroup?.valid ? "valid" : "invalid"}}</p>
+        <h3>What's your favorite food?</h3>
+        <p><input class='form-control' formControlName="food"></p>
+        <h3>Form value</h3>
+        <pre> {{ myForm.value | json }} </pre>
+    </form>
 </div>
