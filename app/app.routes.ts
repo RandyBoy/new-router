@@ -1,4 +1,4 @@
-import { provideRouter, RouterConfig } from '@angular/router';
+import { provideRouter, RouterConfig  } from '@angular/router';
 import { CrisisListComponent }  from './crisis-list.component';
 import { NotFoundComponent } from './not-found';
 import { CrisisAdminComponent } from './crisis-center/crisis-admin.component';
@@ -13,6 +13,7 @@ export const routes: RouterConfig = [
     ...HeroesRoutes,
     { path: '**', component: NotFoundComponent }
 ];
+
 
 export const APP_ROUTER_PROVIDERS = [
     provideRouter(routes),
