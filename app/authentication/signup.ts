@@ -4,12 +4,13 @@ import { CORE_DIRECTIVES } from '@angular/common';
 import { FORM_DIRECTIVES  } from '@angular/forms';
 
 import {AuthService} from './auth.service';
+import { FocusDirective } from '../directives/FocusDirective';
 
 
 @Component({
     selector: 'signup',
     // providers: [AuthService],
-    directives: [CORE_DIRECTIVES, FORM_DIRECTIVES],
+    directives: [CORE_DIRECTIVES, FORM_DIRECTIVES, FocusDirective],
     templateUrl: '/app/authentication/signup.html'
 })
 export class Signup {
@@ -19,7 +20,7 @@ export class Signup {
     }
 
     signup(event: any, username: string, password: string, avatar: string): void {
-        // event.preventDefault();
+        //  event.preventDefault();
         this.authService.signup(username, password, avatar).then(() => {
             this.router.navigateByUrl('/crisis-center');
         });

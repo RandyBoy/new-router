@@ -6,12 +6,16 @@ import { FORM_DIRECTIVES, REACTIVE_FORM_DIRECTIVES, FormBuilder, FormGroup, Vali
 import {AuthService} from './auth.service';
 import { Observable } from 'rxjs/observable';
 import { AsyncValidatorFn } from '@angular/forms/src/directives/validators';
+import {FocusDirective  } from '../directives/FocusDirective';
+import { getDOM, DomAdapter } from '@angular/platform-browser/src/dom/dom_adapter';
+import {BrowserDomAdapter} from '@angular/platform-browser/src/browser/browser_adapter'
+
 
 @Component({
     selector: 'login',
     // providers: [AuthService],
-    directives: [ROUTER_DIRECTIVES, CORE_DIRECTIVES, FORM_DIRECTIVES, REACTIVE_FORM_DIRECTIVES],
-    templateUrl: `/app/authentication/login.html`,
+    directives: [ROUTER_DIRECTIVES, CORE_DIRECTIVES, FORM_DIRECTIVES, REACTIVE_FORM_DIRECTIVES, FocusDirective],
+    templateUrl: (() => { return 'app/authentication/login.html'; })(),
     providers: [FormBuilder],
     pipes: [JsonPipe]
 })
@@ -21,6 +25,7 @@ export class Login {
     targetPage: string = null;
     loginModel: string;
     loginControl: FormControl = new FormControl('');
+    domAdapter: DomAdapter;
     nameGroup = new FormGroup({
         first: new FormControl('', Validators.required),
         middle: new FormControl(''),
@@ -36,14 +41,18 @@ export class Login {
         private activeRoute: ActivatedRoute,
         private authService: AuthService,
         private builder: FormBuilder) {
+        BrowserDomAdapter.makeCurrent();
+        this.domAdapter = getDOM();
+        // [focus]='true'
 
+        //(document.querySelector('username') as HTMLElement).focus();
         this.loginForm = builder.group({
             login: ["", Validators.required],
             passwordRetry: builder.group({
                 password: ["", Validators.required],
                 passwordConfirmation: ["", Validators.required]
             }, { validator: this.areEqual })
-        });    
+        });
 
         //验证
         // builder.group({
@@ -99,7 +108,7 @@ export class Login {
         // event.preventDefault();
         this.authService
             .login(username, password)
-            .subscribe(() => {
+            .then(() => {
                 this.router
                     .navigateByUrl(this.targetPage ? this.targetPage : this.defaultPage);
                 return true;
@@ -115,7 +124,12 @@ export class Login {
         return JSON.stringify(this.loginForm.value, null, 2);
     }
 
-    get myform(){
+    get myform() {
         return JSON.stringify(this.myForm);
+    }
+    ngOnInit() {
+        let el: any = this.domAdapter.querySelector(document, '#username');
+        this.domAdapter.invoke(el, 'focus', []);
+        console.log(document.querySelector('#username'));
     }
 }

@@ -1,9 +1,9 @@
 <div class="center-block col-md-4">
     <h1>注册</h1>
-    <form #f="ngForm" (ngSubmit)="signup($event, f.value.username, f.value.password)">
+    <form #f="ngForm" (ngSubmit)="signup($event, f.value.credentials.username, f.value.credentials.password)">
         <div ngModelGroup="credentials" class="form-group">
             <label for="username">用户</label>
-            <input type="text" name='username' ngModel required class="form-control" placeholder="Username">
+            <input type="text" name='username' [focus] = 'true' ngModel required class="form-control" placeholder="Username">
             <label for="password">密码</label>
             <input type="password" name='password' ngModel required class="form-control" placeholder="Password">
         </div>

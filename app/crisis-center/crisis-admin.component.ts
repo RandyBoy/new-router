@@ -29,6 +29,5 @@ export class CrisisAdminComponent {
    */
   constructor(private questionService: QuestionService) {
     this.questions = questionService.getQuestions();
-    console.log(document.location);
   }
 }

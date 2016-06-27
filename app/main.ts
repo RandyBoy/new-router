@@ -2,15 +2,25 @@ import {bootstrap}    from '@angular/platform-browser-dynamic';
 import {AppComponent} from './app.component';
 import { APP_ROUTER_PROVIDERS} from './app.routes';
 import { APP_BASE_HREF, LocationStrategy, PathLocationStrategy  } from '@angular/common';
+import { HTTP_PROVIDERS, Http} from '@angular/http';
 import { provide } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { disableDeprecatedForms, provideForms } from '@angular/forms';
+import { AuthConfig, AuthHttp, JwtHelper } from 'angular2-jwt';
 
 bootstrap(AppComponent, [
-    APP_ROUTER_PROVIDERS,
+    APP_ROUTER_PROVIDERS, HTTP_PROVIDERS,
     disableDeprecatedForms(),
     provideForms(),
-    { provide: LocationStrategy, useClass: PathLocationStrategy },
+    { provide: LocationStrategy, useClass: PathLocationStrategy }, JwtHelper,
+    {
+        provide: AuthHttp,
+        useFactory: (http: Http) => {
+            return new AuthHttp(new AuthConfig({ tokenName: 'jwt' }), http);
+        }
+        ,
+        deps: [Http]
+    }
     // provide(LocationStrategy, { useClass: PathLocationStrategy }),
     //{ provide: APP_BASE_HREF, useValue: '/' },
     // provide(APP_BASE_HREF, { useValue: '/' })
