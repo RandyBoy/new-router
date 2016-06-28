@@ -7,6 +7,9 @@ import { DialogService }  from './dialog.service';
 import { AuthService } from './authentication/auth.service';
 import {JwtHelper} from 'angular2-jwt';
 import {CollapseDirective} from 'ng2-bootstrap';
+
+declare var System;
+
 @Component({
   selector: 'my-app',
   templateUrl: 'app/app.component.html',
@@ -18,6 +21,7 @@ export class AppComponent implements OnInit {
    * [queryParams]="{name: 'cirsis-center',token:'jwttoken'}" fragment="ccfragment"
    * [queryParams] = " { name :'Heroes',token:'angular2-jwt-token'}
    */
+
   name: Observable<string>;
   token: Observable<string>;
   fragment: Observable<string>;
@@ -30,6 +34,7 @@ export class AppComponent implements OnInit {
     this.name = this.router.routerState.queryParams.map(p => p['name']);
     this.token = this.router.routerState.queryParams.map(p => p['token']);
     this.fragment = this.router.routerState.fragment;
+
   }
 
   logout() {
@@ -55,5 +60,18 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
 
+    System.import('crypto-js')
+      .then((crypto) => {
+        console.log(crypto.HmacSHA1("Messageaaa", "Secret Passphrase"));
+        let hash = crypto.HmacSHA1("Message", "Secret Passphrase")
+          .toString(crypto.enc.Base64);
+        console.log(hash);
+        console.log(crypto.MD5('Messagesaaa').toString(crypto.enc.Hex));
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+    // let hash = CryptoJS.HmacSHA1("Message", "Secret Passphrase").toString(CryptoJS.enc.Base64);
+    // console.log(hash);
   }
 }

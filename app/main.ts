@@ -20,9 +20,9 @@ bootstrap(AppComponent, [
         }
         ,
         deps: [Http]
-    }
+    },
     // provide(LocationStrategy, { useClass: PathLocationStrategy }),
-    //{ provide: APP_BASE_HREF, useValue: '/' },
+    { provide: APP_BASE_HREF, useValue: '/' },
     // provide(APP_BASE_HREF, { useValue: '/' })
 ]).catch(err => console.error(err));
 

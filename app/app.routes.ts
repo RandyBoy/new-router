@@ -6,11 +6,13 @@ import { HeroesRoutes, HERO_PROVIDERS } from './heros/heroes.routes';
 import { CrisisCenterRoutes } from './crisis-center/crisis-center.routes';
 import { CanDeactivateGuard } from './interfaces';
 import { LoginRoutes, AUTH_PROVIDERS } from './authentication/login.routes';
+import {JqueryRoutes  } from './jquery/jquery.routes';
 
 export const routes: RouterConfig = [
     ...CrisisCenterRoutes,
     ...LoginRoutes,
     ...HeroesRoutes,
+    ...JqueryRoutes,
     { path: '**', component: NotFoundComponent }
 ];
 

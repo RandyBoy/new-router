@@ -9,7 +9,11 @@ import { AsyncValidatorFn } from '@angular/forms/src/directives/validators';
 import {FocusDirective  } from '../directives/FocusDirective';
 import { getDOM, DomAdapter } from '@angular/platform-browser/src/dom/dom_adapter';
 import {BrowserDomAdapter} from '@angular/platform-browser/src/browser/browser_adapter'
+// import aa = require('crypto');
+import * as Rx from 'rxjs/rx';
 
+declare var System: any;
+declare var $: any;
 
 @Component({
     selector: 'login',
@@ -53,7 +57,8 @@ export class Login {
                 passwordConfirmation: ["", Validators.required]
             }, { validator: this.areEqual })
         });
-
+        // let args = 'foo=1,bar=2,baz=3';
+        // aa.createHmac('sha1', 'app_secret').update(args).digest().toString('base64');
         //验证
         // builder.group({
         //     name: ['', Validators.required],
@@ -127,9 +132,22 @@ export class Login {
     get myform() {
         return JSON.stringify(this.myForm);
     }
+
     ngOnInit() {
+
         let el: any = this.domAdapter.querySelector(document, '#username');
         this.domAdapter.invoke(el, 'focus', []);
-        console.log(document.querySelector('#username'));
+        // console.log(document.querySelector('#username'));
+
+        // console.log($('#username'));
+
+        // System.import('jquery')
+        //     .then(($) => {
+        //         console.log($('#username'));
+        //     })
+        //     .catch((err) => {
+        //         console.error(err);
+        //     });
+
     }
 }

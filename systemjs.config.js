@@ -14,7 +14,10 @@
     'rxjs': 'node_modules/rxjs',
     'angular2-jwt': 'node_modules/angular2-jwt',
     'ng2-bootstrap': 'node_modules/ng2-bootstrap',
-    'moment': 'node_modules/moment'
+    'moment': 'node_modules/moment',
+    'crypto-js': 'node_modules/crypto-js',
+    'jquery': 'node_modules/jquery/dist',
+    'jqueryui': 'node_modules/jqueryui'
   };
 
   // packages tells the System loader how to load when no filename and/or no extension
@@ -26,8 +29,10 @@
     'angular2-jwt': { main: 'angular2-jwt.js', defaultExtension: 'js' },
     'ng2-bootstrap': { main: 'ng2-bootstrap.js', defaultExtension: 'js' },
     'moment': { main: 'moment.js', defaultExtension: 'js' },
+    'crypto-js': { main: 'crypto-js.js', defaultExtension: 'js' },
+    'jquery': { main: 'jquery.min.js', defaultExtension: 'js' },
+    'jqueryui': { main: 'jquery-ui.min.js', defaultExtension: 'js' },
   };
-
   var ngPackageNames = [
     'common',
     'compiler',
@@ -60,7 +65,6 @@
     map: map,
     packages: packages
   };
-
   System.config(config);
 
 })(this);
