@@ -26,6 +26,7 @@ bootstrap(AppComponent, [
     // provide(APP_BASE_HREF, { useValue: '/' })
 ]).catch(err => console.error(err));
 
+
 //{provide: 'alwaysTrue', useValue: (a:ActivatedRouteSnapshot, s:RouterStateSnapshot) => true}
 
 // class AlwaysTrue implements CanActivate {

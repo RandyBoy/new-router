@@ -16,7 +16,7 @@ import { FocusDirective } from '../directives/FocusDirective';
 export class Signup {
 
     constructor(public router: Router, private authService: AuthService) {
-
+    
     }
 
     signup(event: any, username: string, password: string, avatar: string): void {

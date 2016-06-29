@@ -7,7 +7,7 @@
                 <pre class="jwt"><code>{{ jwt }}</code></pre>
                 <pre class="jwt"><code>{{ decodedJwt | json }}</code></pre>
             </ng-container>
-            <p><button class="btn btn-primary" [disabled]='isLogined' (click)="login()">登录</button></p>
+            <p><button id="loginbtn" class="btn btn-primary" [disabled]='isLogined' (click)="login()">登录</button></p>
             <p><button class="btn btn-primary" [disabled]='!isLogined' (click)="logout()">注销</button></p>
         </div>
     </div>
@@ -22,7 +22,7 @@
             <a [routerLink]="['/crisis-center/admin']">Admin</a>
             <a [routerLink]="['/login']">Login</a>
             <a [routerLink]="['/signup']">Signup</a>
-            <a [routerLink]="['redirect']">RedirectTo</a>
+            <a id ='redirect' [routerLink]="['redirect']">RedirectTo</a>
         </nav>
         <ng-container *ngIf="false">
             query: name:{{name | async}} token:{{token | async}} fragment: {{fragment | async}}

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, Inject } from '@angular/core';
 import {JsonPipe} from '@angular/common';
 import { Router, ROUTER_DIRECTIVES, ActivatedRoute } from '@angular/router';
 import { CORE_DIRECTIVES } from '@angular/common';
@@ -7,13 +7,12 @@ import {AuthService} from './auth.service';
 import { Observable } from 'rxjs/observable';
 import { AsyncValidatorFn } from '@angular/forms/src/directives/validators';
 import {FocusDirective  } from '../directives/FocusDirective';
-import { getDOM, DomAdapter } from '@angular/platform-browser/src/dom/dom_adapter';
-import {BrowserDomAdapter} from '@angular/platform-browser/src/browser/browser_adapter'
-// import aa = require('crypto');
+
 import * as Rx from 'rxjs/rx';
+import {dom} from '../utils/dom-service';
+import {Base} from '../base';
 
 declare var System: any;
-declare var $: any;
 
 @Component({
     selector: 'login',
@@ -23,13 +22,14 @@ declare var $: any;
     providers: [FormBuilder],
     pipes: [JsonPipe]
 })
-export class Login {
+export class Login extends Base {
+    elementRef: ElementRef;
     loginForm: FormGroup;
     defaultPage: string = '/crisis-center';
     targetPage: string = null;
     loginModel: string;
     loginControl: FormControl = new FormControl('');
-    domAdapter: DomAdapter;
+    // domAdapter: DomAdapter;
     nameGroup = new FormGroup({
         first: new FormControl('', Validators.required),
         middle: new FormControl(''),
@@ -42,14 +42,14 @@ export class Login {
 
     constructor(
         private router: Router,
+        @Inject(ElementRef) elementRef: ElementRef,
         private activeRoute: ActivatedRoute,
         private authService: AuthService,
         private builder: FormBuilder) {
-        BrowserDomAdapter.makeCurrent();
-        this.domAdapter = getDOM();
+        super();
+        this.elementRef = elementRef;
         // [focus]='true'
 
-        //(document.querySelector('username') as HTMLElement).focus();
         this.loginForm = builder.group({
             login: ["", Validators.required],
             passwordRetry: builder.group({
@@ -135,8 +135,11 @@ export class Login {
 
     ngOnInit() {
 
-        let el: any = this.domAdapter.querySelector(document, '#username');
-        this.domAdapter.invoke(el, 'focus', []);
+        // let el: any;
+        // this.domAdapter.querySelector(this.elementRef, '#username').focus();
+        dom.querySelector(this.elementRef.nativeElement, '#username').focus();
+        //  this.domAdapter.invoke(el, 'focus', []);
+        //jQuery('#username').focus();
         // console.log(document.querySelector('#username'));
 
         // console.log($('#username'));
@@ -148,6 +151,7 @@ export class Login {
         //     .catch((err) => {
         //         console.error(err);
         //     });
+
 
     }
 }

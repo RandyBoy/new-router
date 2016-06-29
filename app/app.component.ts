@@ -7,6 +7,7 @@ import { DialogService }  from './dialog.service';
 import { AuthService } from './authentication/auth.service';
 import {JwtHelper} from 'angular2-jwt';
 import {CollapseDirective} from 'ng2-bootstrap';
+import {dom} from './utils/dom-service';
 
 declare var System;
 
@@ -59,6 +60,10 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
+    //  System.import('app/g').then((dom) => {
+    console.log(dom);
+    console.log(dom.querySelector(document, '#redirect'));
+    // });
 
     System.import('crypto-js')
       .then((crypto) => {
