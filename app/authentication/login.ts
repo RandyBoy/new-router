@@ -1,4 +1,4 @@
-import { Component, ElementRef, Inject } from '@angular/core';
+import { Component, ElementRef, Inject, ReflectiveInjector} from '@angular/core';
 import {JsonPipe} from '@angular/common';
 import { Router, ROUTER_DIRECTIVES, ActivatedRoute } from '@angular/router';
 import { CORE_DIRECTIVES } from '@angular/common';
@@ -16,7 +16,6 @@ declare var System: any;
 
 @Component({
     selector: 'login',
-    // providers: [AuthService],
     directives: [ROUTER_DIRECTIVES, CORE_DIRECTIVES, FORM_DIRECTIVES, REACTIVE_FORM_DIRECTIVES, FocusDirective],
     templateUrl: (() => { return 'app/authentication/login.html'; })(),
     providers: [FormBuilder],
@@ -152,6 +151,11 @@ export class Login extends Base {
         //         console.error(err);
         //     });
 
+        var injector = ReflectiveInjector.resolveAndCreate([
+            { provide: "validToken", useValue: "Value" }
+        ]);
+        expect(injector.get("validToken")).toEqual("Value");
+        expect(() => injector.get("invalidToken")).toThrowError();
 
     }
 }
