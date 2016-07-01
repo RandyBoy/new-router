@@ -23,10 +23,10 @@ export const WhiteListRoutes: RouterConfig = [
             {
                 path: 'heroes',
                 component: HeroListComponent,
-                // children: [
-                //     { path: '', component: HeroListComponent },
-                //     { path: 'hero/:id', component: HeroDetailComponent },
-                // ]
+                children: [
+                    { path: '', component: HeroListComponent, pathMatch: 'full' },
+                    { path: 'hero/:id', component: HeroDetailComponent },
+                ]
             },
             { path: 'hero/:id', component: HeroDetailComponent }
         ]

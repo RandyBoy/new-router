@@ -14,7 +14,7 @@ import { Hero, HeroService }   from './hero.service';
         <span class="badge">{{hero.id}}</span> {{hero.name}}
       </li>
     </ul>
-   list:<router-outlet></router-outlet>
+   <router-outlet></router-outlet>
   `,
     directives: [ROUTER_DIRECTIVES]
 })
