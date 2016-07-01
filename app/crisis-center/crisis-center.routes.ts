@@ -12,26 +12,33 @@ export const CrisisCenterRoutes: RouterConfig = [
     {
         path: '',
         redirectTo: '/crisis-center',
-        terminal: true
+        pathMatch: 'full'
+        //terminal: true
     },
     {
         path: 'crisis-center',
         component: CrisisCenterComponent,
+        resolve: { resdata: 'some-token' },
+        data: { one: 'one' },
         children: [
             {
                 path: '',
                 component: CrisisListComponent,
+                pathMatch: 'full'
             },
             {
                 path: 'admin',
                 component: CrisisAdminComponent,
                 canActivate: [AuthGuard],
-                outlet: 'aux'
+                outlet: 'aux',
+                resolve: { resdata: 'some-token' }
             },
             {
                 path: 'admin',
                 component: CrisisAdminComponent,
-                canActivate: [AuthGuard]
+                canActivate: [AuthGuard],
+                data: { two: 'two' },
+                resolve: { resdata: 'some-token' }
             },
             {
                 path: 'notfound',

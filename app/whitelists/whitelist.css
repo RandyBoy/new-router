@@ -1,0 +1,172 @@
+.whitelists-wrap{
+    padding:20px;
+}
+.settings-nav{
+    width:700px;
+    margin:0 auto;
+    border:1px solid #44558C;
+    -webkit-border-radius:4px;
+    -moz-border-radius:4px;
+    border-radius:4px;
+    overflow: hidden;
+}
+.settings-nav>li{
+    border-right:1px solid #44558C;
+}
+.settings-nav li:last-child{
+    border-right:0;
+}
+.settings-nav>li>a{
+    -webkit-border-radius:0;
+    -moz-border-radius:0;
+    border-radius:0;
+}
+.settings-nav li.active >a{
+    background: #44558C;
+}
+.whitelists-config{
+    margin:0 auto;
+    padding-top:30px;
+}
+
+/*白名单*/
+.white-lside{
+    float: left;
+    width:740px;
+    padding-left:10px;
+    margin-bottom:20px;
+}
+.panel-wrap{
+    text-align: center;
+}
+.more{
+    padding:10px 10px;
+    display: inline-block;
+}
+.table-panel{
+    background: #727C9F;
+    color:#fff;
+}
+.table-panel>tr>th{font-weight:normal;}
+.table-panel th{
+    text-align: center;
+}
+.table-hover>tbody{
+    border:1px solid #fff;
+}
+.table-hover>tbody>tr>td{
+    border-top: 0;
+    border-color: #fff;
+}
+.table-hover>tbody>tr:hover{
+    background: #f2f9ff;
+    border:1px solid #b7caed;
+}
+.table-hover>tbody>tr:hover>td{
+    border-color: #f2f9ff;
+}
+.white-rside{
+    padding-left:10px;
+}
+
+@media screen and (min-width:1080px) {
+    /*right*/
+    .white-rside{
+        /*float: left;*/
+        margin-left:780px;
+        padding-top:50px;
+        /*width:240px;*/
+    }
+    .white-rside-wrap{
+        width:240px;
+    }
+}
+
+
+/*recognition*/
+.title{
+    font-size:15px;
+}
+.recognition-wrap{
+    padding-left:100px;
+}
+.recognition-wrap .form-group{
+    line-height: 34px;
+}
+input[type='radio']{
+    display: block;
+}
+.select-style{
+    display: inline;
+    width:100px;
+    margin-bottom: 10px;
+}
+.export{
+    letter-spacing:2px;
+}
+
+/*新增*/
+.modal-content{
+    background: #2B2D33;
+    color:#fff;
+    position: relative;
+}
+.modal-header{
+    border-bottom:0;
+}
+.modal-footer{
+    border-top:0;
+}
+.modal-body .black-car-status{
+    position: absolute;
+    color:red;
+    width: 100%;
+    text-align: center;
+}
+
+
+/*页码*/
+.getpage{
+    float: left;
+    width:40px;
+    padding:6px 0;
+    text-align: center;
+    margin:0 10px;
+}
+.page-num{
+    border:1px solid #fff;
+    color:#727C9F;
+    -webkit-border-radius:4px;
+    -moz-border-radius:4px;
+    border-radius:4px;
+    cursor:pointer;
+}
+.page-num:hover{
+    background: #44558C;
+    color:#fff;
+}
+.btn-primary-a{
+    background: #3d578d;
+    color:#fff;
+    margin:0 10px;
+    -webkit-border-radius:4px;
+    -moz-border-radius:4px;
+    border-radius:4px;
+    cursor:pointer;
+}
+.btn-primary-a:hover{
+    background: #3d578d;
+    color:#fff;
+}
+.a-btn-primary{
+    background: #3d578d;
+}
+
+.btn-new-add{position: relative;  }
+.btn-new-add>button{padding-left:35px;padding-right:25px;}
+.btn-new-add>button>span{position:absolute;left:15px;top:8px}
+.vague{margin-bottom:3px}
+.vague-form-group>div{padding-left:0;}
+
+
+

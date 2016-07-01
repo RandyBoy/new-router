@@ -1,0 +1,12 @@
+<div class="whitelists-wrap">
+    <ul class="nav nav-pills nav-justified settings-nav" role="pilllist">
+        <li role="presentation" [routerLinkActive]="['active']"><a [routerLink]="['recognition']">识别设置</a></li>
+        <li role="presentation" [routerLinkActive]="['active']"><a [routerLink]="['white']">白名单</a></li>
+        <li role="presentation" [routerLinkActive]="['active']"><a [routerLink]="['black']">黑名单</a></li>
+        <li role="presentation" [routerLinkActive]="['active']"><a [routerLink]="['heroes']">Heroes</a></li>
+    </ul>
+    <div class="whitelists-config">
+       white: <router-outlet></router-outlet>
+    </div>
+
+</div>

@@ -7,12 +7,16 @@ import { CrisisCenterRoutes } from './crisis-center/crisis-center.routes';
 import { CanDeactivateGuard } from './interfaces';
 import { LoginRoutes, AUTH_PROVIDERS } from './authentication/login.routes';
 import {JqueryRoutes  } from './jquery/jquery.routes';
+import { TabsRoutes } from './tabcontrol/tabs.routers';
+import { WhiteListRoutes } from './whitelists/whitelist.routers';
 
 export const routes: RouterConfig = [
     ...CrisisCenterRoutes,
     ...LoginRoutes,
     ...HeroesRoutes,
     ...JqueryRoutes,
+    ...TabsRoutes,
+    ...WhiteListRoutes,
     { path: '**', component: NotFoundComponent }
 ];
 

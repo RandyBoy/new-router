@@ -15,7 +15,8 @@ declare var System;
   selector: 'my-app',
   templateUrl: 'app/app.component.html',
   directives: [ROUTER_DIRECTIVES, COMMON_DIRECTIVES, CollapseDirective],
-  providers: [HeroService, DialogService]
+  providers: [HeroService, DialogService],
+  precompile:[]
 })
 export class AppComponent implements OnInit {
   /**
@@ -64,7 +65,7 @@ export class AppComponent implements OnInit {
     console.log(dom);
     console.log(dom.querySelector(document, '#redirect'));
     // });
-
+    console.log(this);
     System.import('crypto-js')
       .then((crypto) => {
         console.log(crypto.HmacSHA1("Messageaaa", "Secret Passphrase"));

@@ -3,6 +3,7 @@ import { ROUTER_DIRECTIVES } from '@angular/router';
 import { DynamicFormComponent }     from '../question/dynamic-form.component';
 import { QuestionService } from '../question/question.service';
 import { HeroFormComponent } from '../heros/hero-form.component';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   template: `
@@ -27,7 +28,15 @@ export class CrisisAdminComponent {
   /**
    *
    */
-  constructor(private questionService: QuestionService) {
+  constructor(private questionService: QuestionService,
+    private activeRoute: ActivatedRoute) {
     this.questions = questionService.getQuestions();
+  }
+
+  ngOnInit() {
+    this.activeRoute
+      .data
+      .subscribe(
+      (res) => console.log(res));
   }
 }

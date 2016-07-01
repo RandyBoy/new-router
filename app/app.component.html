@@ -22,7 +22,9 @@
             <a [routerLink]="['/crisis-center/admin']">Admin</a>
             <a [routerLink]="['/login']">Login</a>
             <a [routerLink]="['/signup']">Signup</a>
-            <a id ='redirect' [routerLink]="['redirect']">RedirectTo</a>
+            <a [routerLink]="['/whitelist']">WhiteList</a>
+            <a [routerLink]="['/tabs']">Tabs</a>
+            <a id='redirect' [routerLink]="['../', 'redirect']">RedirectTo</a>
         </nav>
         <ng-container *ngIf="false">
             query: name:{{name | async}} token:{{token | async}} fragment: {{fragment | async}}

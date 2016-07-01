@@ -1,6 +1,6 @@
 // TODO SOMEDAY: Feature Componetized like CrisisCenter
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute, ROUTER_DIRECTIVES} from '@angular/router';
 
 import { Hero, HeroService }   from './hero.service';
 
@@ -14,7 +14,9 @@ import { Hero, HeroService }   from './hero.service';
         <span class="badge">{{hero.id}}</span> {{hero.name}}
       </li>
     </ul>
-  `
+   list:<router-outlet></router-outlet>
+  `,
+    directives: [ROUTER_DIRECTIVES]
 })
 export class HeroListComponent implements OnInit, OnDestroy {
     heroes: Hero[];
@@ -24,7 +26,9 @@ export class HeroListComponent implements OnInit, OnDestroy {
 
     constructor(
         private service: HeroService,
-        private router: Router) { }
+        private router: Router,
+        private route: ActivatedRoute
+    ) { }
 
     ngOnInit() {
         this.sub = this.router
@@ -44,7 +48,7 @@ export class HeroListComponent implements OnInit, OnDestroy {
     isSelected(hero: Hero) { return hero.id === this.selectedId; }
 
     onSelect(hero: Hero) {
-        this.router.navigate(['/hero', hero.id]);
+        this.router.navigate(['../', 'hero', hero.id], { relativeTo: this.route });
     }
 
 }

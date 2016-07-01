@@ -3,18 +3,18 @@
     <form #f="ngForm" (ngSubmit)="login($event, f.value.credentials.username, f.value.credentials.password)">
         <div ngModelGroup="credentials" class="form-group">
             <label for="username">用户</label>
-            <input type="text" id='username' name='username'  ngModel required class="form-control" placeholder="Username">
+            <input type="text" id='username' name='username' ngModel required class="form-control" placeholder="Username">
             <label for="password">密码</label>
             <input type="password" name='password' ngModel required class="form-control" placeholder="Password">
         </div>
         <button type="submit" class="btn btn-default btn-primary">登录</button>
-        <a [routerLink]="['/signup']" class="btn btn-success">注册</a>
+        <button [routerLink]="['/signup']" class="btn btn-success">注册</button>
     </form>
     <pre>{{f.value | json}}</pre>
 
     <form [formGroup]="loginForm">
         <div class="form-group">
-            <p>Login <input formControlName="login" class="form-control"></p>
+            <p>Login <input [formControlName]="'login'" class="form-control"></p>
         </div>
         <div formGroupName="passwordRetry" class="form-group">
             <p>Password <input type="password" formControlName="password" class="form-control"></p>

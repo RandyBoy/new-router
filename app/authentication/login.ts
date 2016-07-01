@@ -1,4 +1,4 @@
-import { Component, ElementRef, Inject, ReflectiveInjector} from '@angular/core';
+import { Component, ElementRef, Inject, ReflectiveInjector, provide} from '@angular/core';
 import {JsonPipe} from '@angular/common';
 import { Router, ROUTER_DIRECTIVES, ActivatedRoute } from '@angular/router';
 import { CORE_DIRECTIVES } from '@angular/common';
@@ -13,6 +13,7 @@ import {dom} from '../utils/dom-service';
 import {Base} from '../base';
 
 declare var System: any;
+
 
 @Component({
     selector: 'login',
@@ -73,6 +74,14 @@ export class Login extends Base {
             .subscribe(url => {
                 if (url) this.targetPage = url;
             })
+        console.log(this.activeRoute.data);
+
+        this.activeRoute.data.subscribe((data) => {
+            console.log(data);
+            data['resdata'].then(res => console.log(res.someone));
+
+        });
+
 
         // this.router.routerState
         //     .queryParams
@@ -151,11 +160,12 @@ export class Login extends Base {
         //         console.error(err);
         //     });
 
-        var injector = ReflectiveInjector.resolveAndCreate([
+        let injector = ReflectiveInjector.resolveAndCreate([
             { provide: "validToken", useValue: "Value" }
         ]);
-        expect(injector.get("validToken")).toEqual("Value");
-        expect(() => injector.get("invalidToken")).toThrowError();
+
+        // expect(injector.get("validToken")).toEqual("Value");
+        // expect(() => injector.get("invalidToken")).toThrowError();
 
     }
 }
