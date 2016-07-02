@@ -9,6 +9,8 @@ import { LoginRoutes, AUTH_PROVIDERS } from './authentication/login.routes';
 import {JqueryRoutes  } from './jquery/jquery.routes';
 import { TabsRoutes } from './tabcontrol/tabs.routers';
 import { WhiteListRoutes } from './whitelists/whitelist.routers';
+import { ChangeDetectorRoutes } from './ChangeDetector//ChangeDetector.routes';
+import { DynamicComponentRoutes } from './dynamic-component//DynamicComponentRouters';
 
 export const routes: RouterConfig = [
     ...CrisisCenterRoutes,
@@ -17,6 +19,8 @@ export const routes: RouterConfig = [
     ...JqueryRoutes,
     ...TabsRoutes,
     ...WhiteListRoutes,
+    ...ChangeDetectorRoutes,
+    ...DynamicComponentRoutes,
     { path: '**', component: NotFoundComponent }
 ];
 
