@@ -1,4 +1,4 @@
-import { Component, ElementRef, Inject, ReflectiveInjector, provide} from '@angular/core';
+import { Component, ElementRef, Inject, ReflectiveInjector, provide, ComponentFactoryResolver} from '@angular/core';
 import {JsonPipe} from '@angular/common';
 import { Router, ROUTER_DIRECTIVES, ActivatedRoute } from '@angular/router';
 import { CORE_DIRECTIVES } from '@angular/common';
@@ -16,6 +16,7 @@ declare var System: any;
 
 
 @Component({
+    moduleId:module.id,
     selector: 'login',
     directives: [ROUTER_DIRECTIVES, CORE_DIRECTIVES, FORM_DIRECTIVES, REACTIVE_FORM_DIRECTIVES, FocusDirective],
     templateUrl: (() => { return 'app/authentication/login.html'; })(),
@@ -42,11 +43,12 @@ export class Login extends Base {
 
     constructor(
         private router: Router,
-        @Inject(ElementRef) elementRef: ElementRef,
+        @Inject(ElementRef) elementRef: ElementRef, private cfr: ComponentFactoryResolver,
         private activeRoute: ActivatedRoute,
         private authService: AuthService,
         private builder: FormBuilder) {
         super();
+        console.log(cfr);
         this.elementRef = elementRef;
         // [focus]='true'
 
@@ -91,7 +93,7 @@ export class Login extends Base {
     }
 
     get passValid() {
-        return this.loginForm.controls['passwordRetry'].valid;
+        return (this.loginForm.controls['passwordRetry'].valid);
     }
 
     areEqual(group: FormGroup) {

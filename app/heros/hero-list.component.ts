@@ -3,8 +3,10 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute, ROUTER_DIRECTIVES} from '@angular/router';
 
 import { Hero, HeroService }   from './hero.service';
+import { MdDialogPortal } from '../dynamic-component/MdDialogPortal';
 
 @Component({
+    moduleId:module.id,
     template: `
     <h2>HEROES</h2>
     <ul class="items">
@@ -14,9 +16,12 @@ import { Hero, HeroService }   from './hero.service';
         <span class="badge">{{hero.id}}</span> {{hero.name}}
       </li>
     </ul>
+    <template mdDialogPortal>
+         <p>The content of this template is captured by the portal.</p>
+     </template>
    <router-outlet></router-outlet>
   `,
-    directives: [ROUTER_DIRECTIVES]
+    directives: [ROUTER_DIRECTIVES, MdDialogPortal]
 })
 export class HeroListComponent implements OnInit, OnDestroy {
     heroes: Hero[];

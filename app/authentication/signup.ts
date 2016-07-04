@@ -8,6 +8,7 @@ import { FocusDirective } from '../directives/FocusDirective';
 
 
 @Component({
+    moduleId:module.id,
     selector: 'signup',
     // providers: [AuthService],
     directives: [CORE_DIRECTIVES, FORM_DIRECTIVES, FocusDirective],

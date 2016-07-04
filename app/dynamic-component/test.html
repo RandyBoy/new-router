@@ -1,0 +1,18 @@
+<div class="center-block col-md-4">
+    <h1>动态创建注册组件</h1>
+    <form #f="ngForm" (ngSubmit)="signup( f.value.credentials.username, f.value.credentials.password)">
+        <div ngModelGroup="credentials" class="form-group">
+            <label for="username">用户</label>
+            <input type="text" name='username' ngModel required class="form-control" placeholder="Username">
+            <label for="password">密码</label>
+            <input type="password" name='password' ngModel required class="form-control" placeholder="Password">
+        </div>
+        <div ngModelGroup="person" class="form-group">
+            <p>First name: <input class="form-control" type="text" name="firstName" ngModel></p>
+            <p>Last name: <input class="form-control" type="text" name="lastName" ngModel></p>
+        </div>
+        <button type="submit" class="btn btn-default btn-primary">注册</button>
+        <button class="btn btn-primary" (click)='login($event)'>登录</button>
+    </form>
+    <pre>{{f.value | json }}</pre>
+</div>
