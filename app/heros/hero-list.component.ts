@@ -1,12 +1,15 @@
 // TODO SOMEDAY: Feature Componetized like CrisisCenter
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild} from '@angular/core';
 import { Router, ActivatedRoute, ROUTER_DIRECTIVES} from '@angular/router';
 
 import { Hero, HeroService }   from './hero.service';
 import { MdDialogPortal } from '../dynamic-component/MdDialogPortal';
+import { ComponentPortal, TemplatePortal } from '../core/portal/portal';
+import { PortalHostDirective, TemplatePortalDirective } from '../core/portal/portal-directives';
+import { DynamicComponent } from '../dynamic-component/DynamicComponent';
 
 @Component({
-    moduleId:module.id,
+    moduleId: module.id,
     template: `
     <h2>HEROES</h2>
     <ul class="items">
@@ -19,9 +22,10 @@ import { MdDialogPortal } from '../dynamic-component/MdDialogPortal';
     <template mdDialogPortal>
          <p>The content of this template is captured by the portal.</p>
      </template>
+     <template [portalHost]="dynamicComponentPortal"></template>
    <router-outlet></router-outlet>
   `,
-    directives: [ROUTER_DIRECTIVES, MdDialogPortal]
+    directives: [ROUTER_DIRECTIVES, MdDialogPortal, PortalHostDirective]
 })
 export class HeroListComponent implements OnInit, OnDestroy {
     heroes: Hero[];
@@ -34,7 +38,8 @@ export class HeroListComponent implements OnInit, OnDestroy {
         private router: Router,
         private route: ActivatedRoute
     ) { }
-
+    dynamicComponentPortal: ComponentPortal;
+    @ViewChild(MdDialogPortal) private portal: MdDialogPortal;
     ngOnInit() {
         this.sub = this.router
             .routerState
@@ -44,6 +49,7 @@ export class HeroListComponent implements OnInit, OnDestroy {
                 this.service.getHeroes()
                     .then(heroes => this.heroes = heroes);
             });
+        this.dynamicComponentPortal = new ComponentPortal(DynamicComponent);
     }
 
     ngOnDestroy() {

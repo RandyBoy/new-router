@@ -19,7 +19,7 @@ declare var System: any;
     moduleId:module.id,
     selector: 'login',
     directives: [ROUTER_DIRECTIVES, CORE_DIRECTIVES, FORM_DIRECTIVES, REACTIVE_FORM_DIRECTIVES, FocusDirective],
-    templateUrl: (() => { return 'app/authentication/login.html'; })(),
+    templateUrl: (() => { return './login.html'; })(),
     providers: [FormBuilder],
     pipes: [JsonPipe]
 })

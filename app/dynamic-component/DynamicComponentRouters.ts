@@ -12,8 +12,8 @@ export const DynamicComponentRoutes: RouterConfig = [
         path: 'dynamiccomponentcenter',
         component: DynamicComponentCenter,
         children: [
-            { path: '', redirectTo: 'dynamic-Html-outlet-app', pathMatch: 'full' },
-            { path: 'dynamic-Html-outlet-app', component: DynamicHTMLOutletApp }
+            { path: '', redirectTo: 'dynamic-html-outlet-app', pathMatch: 'full' },
+            { path: 'dynamic-html-outlet-app', component: DynamicHTMLOutletApp }
         ]
     }
 ];
