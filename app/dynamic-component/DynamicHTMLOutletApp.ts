@@ -1,16 +1,12 @@
 import { Component } from '@angular/core';
-import { UnlessDirective } from '../directives/unless-directive';
 import { DynamicHtmlOutlet } from './DynamicHTMLOutlet';
 import { BasicFormMux } from './basic-form-mux';
 
 @Component({
     moduleId: module.id,
     selector: 'dynamic-Html-outlet-app',
-    template: `
-        <dynamic-html-outlet [src]="html"> </dynamic-html-outlet>
-        <basic-form-mux [template]="html2"> </basic-form-mux>
-    `,
-    directives: [DynamicHtmlOutlet, BasicFormMux,UnlessDirective]
+    templateUrl: 'dynamic-html-outlet-app.html',
+    directives: [DynamicHtmlOutlet, BasicFormMux]
 })
 export class DynamicHTMLOutletApp {
     html = `<div class="login center-block col-md-4 ">
