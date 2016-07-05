@@ -20,6 +20,7 @@ export class DynamicHtmlOutlet {
     ngOnChanges() {
         if (!this.src) return;
         const metadata = new ComponentMetadata({
+            moduleId: module.id,
             selector: 'dynamic-component-load-html',
             directives: [ROUTER_DIRECTIVES, CORE_DIRECTIVES, FORM_DIRECTIVES, REACTIVE_FORM_DIRECTIVES],
             template: this.src,

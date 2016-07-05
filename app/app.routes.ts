@@ -10,7 +10,7 @@ import {JqueryRoutes  } from './jquery/jquery.routes';
 import { TabsRoutes } from './tabcontrol/tabs.routers';
 import { WhiteListRoutes } from './whitelists/whitelist.routers';
 import { ChangeDetectorRoutes } from './ChangeDetector//ChangeDetector.routes';
-import { DynamicComponentRoutes } from './dynamic-component//DynamicComponentRouters';
+import { DynamicComponentRoutes } from './dynamic-components/DynamicComponentRouters';
 
 export const routes: RouterConfig = [
     ...CrisisCenterRoutes,

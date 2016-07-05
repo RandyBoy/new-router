@@ -1,9 +1,11 @@
 import {
-    Component, Directive, ViewChild, OnInit, Input, ViewContainerRef, TemplateRef,
-    ComponentResolver, ComponentMetadata, ReflectiveInjector, ComponentFactory, ComponentFactoryResolver
+    Component, Directive, ViewChild,
+    OnInit, Input, ViewContainerRef,
+    TemplateRef, ComponentResolver, ComponentMetadata,
+    ReflectiveInjector, ComponentFactory, ComponentFactoryResolver
 } from '@angular/core';
 import { CORE_DIRECTIVES } from '@angular/common';
-import {FORM_DIRECTIVES, FormBuilder, REACTIVE_FORM_DIRECTIVES} from '@angular/forms';
+import { FORM_DIRECTIVES, FormBuilder, REACTIVE_FORM_DIRECTIVES } from '@angular/forms';
 import { ROUTER_DIRECTIVES, Router } from '@angular/router';
 import { Observable } from 'rxjs/rx';
 import { UnlessDirective } from '../directives/unless-directive';
@@ -13,20 +15,15 @@ import { DynamicComponent } from './DynamicComponent';
     moduleId: module.id,
     selector: 'basic-form-mux',
     templateUrl: './basic-form-mux.html',
-    directives: [CORE_DIRECTIVES] // PortalHostDirective, TemplatePortalDirective
+    directives: [CORE_DIRECTIVES, UnlessDirective]
 })
 export class BasicFormMux implements OnInit {
     @Input('template') template: string;
     @ViewChild('muxContent', { read: ViewContainerRef }) contentTarget: ViewContainerRef;
     @ViewChild('muxContentB', { read: ViewContainerRef }) contentTargetB: ViewContainerRef;
-    // @ViewChild(MdDialogPortal) private portal: MdDialogPortal;
-    //@ViewChild('muxContentC', { read: TemplateRef }) contentTargetC: TemplateRef;<p *myUnless = "toggle">ContentChild</p>
 
     toggle: boolean = false;
-    // dynamicComponentPortal;
     constructor(private componentResolver: ComponentResolver) {
-        // 
-        // this.dynamicComponentPortal = new ComponentPortal(DynamicComponent); private componentFactoryResolver: ComponentFactoryResolver
     }
 
     ngOnInit() {
@@ -46,9 +43,10 @@ export class BasicFormMux implements OnInit {
 
     createContentComponent(template: string): any {
         @Component({
+            moduleId: module.id,
             selector: 'dynamic-component-load-html2',
             template: template,
-            directives: [ROUTER_DIRECTIVES, CORE_DIRECTIVES, FORM_DIRECTIVES, REACTIVE_FORM_DIRECTIVES]
+            directives: [ROUTER_DIRECTIVES, CORE_DIRECTIVES, FORM_DIRECTIVES, REACTIVE_FORM_DIRECTIVES, UnlessDirective]
         })
         class MuxContent {
             constructor(formBuilder: FormBuilder) { }
@@ -61,6 +59,7 @@ export class BasicFormMux implements OnInit {
     }
 
     dynamicLoadComponent(component: any, vcfs: ViewContainerRef[]) {
+
         this.componentResolver
             .resolveComponent(component)
             .then((factory: ComponentFactory<any>) => {

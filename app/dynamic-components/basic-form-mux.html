@@ -1,6 +1,6 @@
 <template #muxContent></template>
 <template #muxContentB></template>
 <button class='btn btn-primary' (click)=' toggle = !toggle'>Toggle</button>
-<template [ngIf]='toggle'>
+<template [myUnless]='toggle'>
     <h3>ViewContainerRef CreateEmbeddedView Test</h3>
 </template>

@@ -9,7 +9,7 @@ export const DynamicComponentRoutes: RouterConfig = [
         pathMatch: 'full'
     },
     {
-        path: 'dynamiccomponentcenter',
+        path: 'dynamic-component-center',
         component: DynamicComponentCenter,
         children: [
             { path: '', redirectTo: 'dynamic-html-outlet-app', pathMatch: 'full' },

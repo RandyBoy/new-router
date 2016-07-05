@@ -3,10 +3,10 @@ import { Component, OnInit, OnDestroy, ViewChild} from '@angular/core';
 import { Router, ActivatedRoute, ROUTER_DIRECTIVES} from '@angular/router';
 
 import { Hero, HeroService }   from './hero.service';
-import { MdDialogPortal } from '../dynamic-component/MdDialogPortal';
+import { MdDialogPortal } from '../dynamic-components/MdDialogPortal';
 import { ComponentPortal, TemplatePortal } from '../core/portal/portal';
 import { PortalHostDirective, TemplatePortalDirective } from '../core/portal/portal-directives';
-import { DynamicComponent } from '../dynamic-component/DynamicComponent';
+import { DynamicComponent } from '../dynamic-components/DynamicComponent';
 
 @Component({
     moduleId: module.id,
