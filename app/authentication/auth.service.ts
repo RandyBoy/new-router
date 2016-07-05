@@ -76,4 +76,13 @@ export class AuthService {
         return this.currentUser;
     }
 
+    relogin() {
+        Observable.timer(1000, 5000).subscribe((val) => {
+            if (this.jwtHelper.isTokenExpired(this.jwt, 10)) {
+
+            }
+        }
+        );
+    }
+
 }

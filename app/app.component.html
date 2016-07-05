@@ -7,8 +7,12 @@
                 <pre class="jwt"><code>{{ jwt }}</code></pre>
                 <pre class="jwt"><code>{{ decodedJwt | json }}</code></pre>
             </ng-container>
+            <p><button class="btn btn-primary"  (click)="callSecuredApi()">获取保护API</button></p>
+            <p><button class="btn btn-primary"  (click)="callAnonymousApi()">获取匿名API</button></p>
             <p><button id="loginbtn" class="btn btn-primary" [disabled]='isLogined' (click)="login()">登录</button></p>
             <p><button class="btn btn-primary" [disabled]='!isLogined' (click)="logout()">注销</button></p>
+            <h2 *ngIf="response">The response of calling the <span class="red">{{api}}</span> API is:</h2>
+            <h3 *ngIf="response">{{response}}</h3>
         </div>
     </div>
 </div>

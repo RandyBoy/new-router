@@ -5,6 +5,7 @@ import {White} from './white';
 import {Black} from './black';
 import { HeroListComponent } from '../heros/hero-list.component';
 import { HeroDetailComponent } from '../heros/hero-detail.component';
+import { NotFoundComponent } from '../not-found';
 
 export const WhiteListRoutes: RouterConfig = [
     {
@@ -24,7 +25,7 @@ export const WhiteListRoutes: RouterConfig = [
                 path: 'heroes',
                 component: HeroListComponent,
                 children: [
-                    { path: '', component: HeroListComponent, pathMatch: 'full' },
+                    { path: '', component: NotFoundComponent, pathMatch: 'full' },
                     { path: 'hero/:id', component: HeroDetailComponent },
                 ]
             },
