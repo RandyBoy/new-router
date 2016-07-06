@@ -50,13 +50,15 @@ export class AuthService {
     private post(url: string, username: string, password: string, avatar?: string): Promise<void> {
 
         let body = JSON.stringify({ username, password, avatar });
-        return this.http.post(url, body, { headers: contentHeaders }).toPromise()
+        return this.http
+            .post(url, body, { headers: contentHeaders })
+            .toPromise()
             .then(response => {
                 let userJson = response.json();
                 this.isLoggedIn = true;
                 this.jwt = userJson.id_token;
                 localStorage.setItem('jwt', this.jwt);
-                this.decodedJwt = this.jwt && this.jwtHelper.decodeToken(this.jwt)
+                this.decodedJwt = this.jwt && this.jwtHelper.decodeToken(this.jwt);
                 this.currentUser = new User(this.jwtHelper.decodeToken(userJson.id_token));
                 //this.publishUserJoined(this.currentUser);
             }, error => {

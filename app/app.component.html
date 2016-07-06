@@ -1,14 +1,35 @@
-<div class="row">
-    <button type="button" class="btn btn-info" (click)="isCollapsed = !isCollapsed">JWT 信息</button>
+<div class="container">
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="container-fluid">
+            <ul class="nav navbar-nav">
+                <li [routerLinkActive]="['active']"> <a class="btn btn-info" (click)="isCollapsed = !isCollapsed">JWT 信息</a> </li>
+                <li [routerLinkActive]="['active']"><a [routerLink]="['/crisis-center']">Crisis Center</a></li>
+                <li [routerLinkActive]="['active']"><a [routerLink]="['/heroes']">Heroes</a></li>
+                <li [routerLinkActive]="['active']"><a [routerLink]="['/jquery']">Jquery</a></li>
+                <li [routerLinkActive]="['active']"><a [routerLink]="['/crisis-center/admin']">Admin</a></li>
+                <li [routerLinkActive]="['active']"><a [routerLink]="['/login']">Login</a></li>
+                <li [routerLinkActive]="['active']"><a [routerLink]="['/signup']">Signup</a></li>
+                <li [routerLinkActive]="['active']"><a [routerLink]="['/whitelist']">WhiteList</a></li>
+                <li [routerLinkActive]="['active']"><a [routerLink]="['/tabs']">Tabs</a></li>
+                <li [routerLinkActive]="['active']"><a [routerLink]="['/changedetectcenter']">ChangeDetectCenter</a></li>
+                <li [routerLinkActive]="['active']"><a [routerLink]="['/dynamic-component-center']">DynamicComponentCenter</a></li>
+                <li [routerLinkActive]="['active']"><a id='redirect' [routerLink]="['../', 'redirect']">RedirectTo</a></li>
+            </ul>
+        </div>
+
+    </nav>
+</div>
+<div class="row home" on-blur="isCollapsed = !isCollapsed">
     <div [collapse]="!isCollapsed" class="card card-block card-header">
         <div class="home col-md-5">
+            <h4 *ngIf="curUser">用户=>{{curUser?.username}}</h4>
             <ng-container *ngIf="jwt">
                 <h2>Your JWT is:</h2>
                 <pre class="jwt"><code>{{ jwt }}</code></pre>
                 <pre class="jwt"><code>{{ decodedJwt | json }}</code></pre>
             </ng-container>
-            <p><button class="btn btn-primary"  (click)="callSecuredApi()">获取保护API</button></p>
-            <p><button class="btn btn-primary"  (click)="callAnonymousApi()">获取匿名API</button></p>
+            <p><button class="btn btn-primary" (click)="callSecuredApi()">获取保护API</button></p>
+            <p><button class="btn btn-primary" (click)="callAnonymousApi()">获取匿名API</button></p>
             <p><button id="loginbtn" class="btn btn-primary" [disabled]='isLogined' (click)="login()">登录</button></p>
             <p><button class="btn btn-primary" [disabled]='!isLogined' (click)="logout()">注销</button></p>
             <h2 *ngIf="response">The response of calling the <span class="red">{{api}}</span> API is:</h2>
@@ -18,7 +39,18 @@
 </div>
 <div class='row home'>
     <ng-container>
-        <h4 *ngIf="curUser">用户=>{{curUser?.username}}</h4>
+        <router-outlet></router-outlet>
+        <hr>
+        <router-outlet name="aux"></router-outlet>
+        <hr>
+        <router-outlet name="bottom"></router-outlet>
+    </ng-container>
+</div>
+<loading></loading>
+
+<!--<div class='row home'>
+    <ng-container>
+        <!--<h4 *ngIf="curUser">用户=>{{curUser?.username}}</h4>
         <nav>
             <a [routerLink]="['/crisis-center']">Crisis Center</a>
             <a [routerLink]="['/heroes']">Heroes</a>
@@ -34,13 +66,13 @@
         </nav>
         <ng-container *ngIf="false">
             query: name:{{name | async}} token:{{token | async}} fragment: {{fragment | async}}
-        </ng-container>
-        <ng-container>
-            <router-outlet></router-outlet>
-            <hr>
-            <router-outlet name="aux"></router-outlet>
-            <hr>
-            <router-outlet name="bottom"></router-outlet>
-        </ng-container>
-    </ng-container>
-</div>
+        <!--</ng-container>-->
+<!--<ng-container>
+    <router-outlet></router-outlet>
+    <hr>
+    <router-outlet name="aux"></router-outlet>
+    <hr>
+    <router-outlet name="bottom"></router-outlet>
+</ng-container>
+</ng-container>
+</div>-->

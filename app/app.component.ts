@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewEncapsulation} from '@angular/core';
 import { AsyncPipe, COMMON_DIRECTIVES} from '@angular/common';
 import { ROUTER_DIRECTIVES, Router } from '@angular/router';
 import {Observable} from 'rxjs/observable';
@@ -9,16 +9,20 @@ import {JwtHelper, AuthHttp} from 'angular2-jwt';
 import {CollapseDirective} from 'ng2-bootstrap';
 import {dom} from './utils/dom-service';
 import { Http } from '@angular/http';
+import { Loading } from './loading/loading';
+import { URLSearchParams, QueryEncoder } from '@angular/http';
 
 
 declare var System;
 
 @Component({
+  moduleId: module.id,
   selector: 'my-app',
-  templateUrl: 'app/app.component.html',
-  directives: [ROUTER_DIRECTIVES, COMMON_DIRECTIVES, CollapseDirective],
+  templateUrl: './app.component.html',
+  directives: [ROUTER_DIRECTIVES, COMMON_DIRECTIVES, CollapseDirective, Loading],
   providers: [HeroService, DialogService],
-  precompile: []
+  precompile: [],
+  encapsulation: ViewEncapsulation.None
 })
 export class AppComponent implements OnInit {
   /**
@@ -44,7 +48,63 @@ export class AppComponent implements OnInit {
     this.token = this.router.routerState.queryParams.map(p => p['token']);
     this.fragment = this.router.routerState.fragment;
     this.logout();
+
+    // new headers({'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'});
+    let custObj = {
+      app_id: 'qbCLpIQ292',
+      app_data: {
+        page10001: {
+          router: "page10001",
+          customFeature: { title: "1" },
+          eles: [{
+            type: "text",
+            content: "content1"
+          },
+            {
+              type: "form-vessel",
+              customFeature: { form: "test" },
+              content: "content2"
+            }
+          ]
+        }
+      }
+    };
+    console.log(this.param(custObj));
+    // let urlSearchParams = new URLSearchParams("", new QueryEncoder());
+    // urlSearchParams.append('a', this.param(custObj));
+    // console.log(urlSearchParams.toString());
+    // console.log(decodeURIComponent(this.param(custObj)));
+
   }
+  param(obj) {
+    let query = '', name, value, fullSubName, subName, subValue, innerObj, i;
+
+    for (name in obj) {
+      value = obj[name];
+
+      if (value instanceof Array) {
+        for (i = 0; i < value.length; ++i) {
+          subValue = value[i];
+          fullSubName = name + '[' + i + ']';
+          innerObj = {};
+          innerObj[fullSubName] = subValue;
+          query += this.param(innerObj) + '&';
+        }
+      }
+      else if (value instanceof Object) {
+        for (subName in value) {
+          subValue = value[subName];
+          fullSubName = name + '[' + subName + ']';
+          innerObj = {};
+          innerObj[fullSubName] = subValue;
+          query += this.param(innerObj) + '&';
+        }
+      }
+      else if (value !== undefined && value !== null)
+        query += encodeURIComponent(name) + '=' + encodeURIComponent(value) + '&';
+    }
+    return query.length ? query.substr(0, query.length - 1) : query;
+  };
 
   logout() {
     this.authService.logout();
