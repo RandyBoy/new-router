@@ -39,6 +39,11 @@ export class Login extends Base {
     });
     //((\\d{11})|^((\\d{7,8})|(\\d{4}|\\d{3})-(\\d{7,8})|(\\d{4}|\\d{3})-(\\d{7,8})-(\\d{4}|\\d{3}|\\d{2}|\\d{1})|(\\d{7,8})-(\\d{4}|\\d{3}|\\d{2}|\\d{1}))$)
 
+    a$: Rx.BehaviorSubject<any> = new Rx.BehaviorSubject<any>(0);
+    b$: Rx.BehaviorSubject<any> = new Rx.BehaviorSubject<any>(0);
+    c$: Rx.Observable<any>;
+
+
     myForm: FormGroup = new FormGroup({
         name: this.nameGroup,
         food: new FormControl()
@@ -66,6 +71,12 @@ export class Login extends Base {
         console.log(cfr);
         this.elementRef = elementRef;
         // [focus]='true'
+
+        this.c$ = Rx.Observable
+            .concat(this.a$, this.b$)
+            .reduce((x, y) => x + y, 0);
+        this.c$.subscribe(x => console.log(x));
+
 
         this.loginForm = builder.group({
             login: ["", Validators.required],

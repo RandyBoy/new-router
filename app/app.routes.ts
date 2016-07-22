@@ -11,6 +11,7 @@ import { TabsRoutes } from './tabcontrol/tabs.routers';
 import { WhiteListRoutes } from './whitelists/whitelist.routers';
 import { ChangeDetectorRoutes } from './ChangeDetector//ChangeDetector.routes';
 import { DynamicComponentRoutes } from './dynamic-components/DynamicComponentRouters';
+import { WbListRoutes } from './wblist/wblist.routers';
 
 export const routes: RouterConfig = [
     ...CrisisCenterRoutes,
@@ -20,7 +21,7 @@ export const routes: RouterConfig = [
     ...TabsRoutes,
     ...WhiteListRoutes,
     ...ChangeDetectorRoutes,
-    ...DynamicComponentRoutes,
+    ...DynamicComponentRoutes, ...WbListRoutes,
     { path: '**', component: NotFoundComponent }
 ];
 

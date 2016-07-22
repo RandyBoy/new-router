@@ -69,7 +69,7 @@ export class AppComponent implements OnInit {
         }
       }
     };
-    console.log(this.param(custObj));
+    //console.log(this.param(custObj));
     // let urlSearchParams = new URLSearchParams("", new QueryEncoder());
     // urlSearchParams.append('a', this.param(custObj));
     // console.log(urlSearchParams.toString());
@@ -159,21 +159,21 @@ export class AppComponent implements OnInit {
   }
   ngOnInit() {
     //  System.import('app/g').then((dom) => {
-    console.log(dom);
-    console.log(dom.querySelector(document, '#redirect'));
+  //  console.log(dom);
+   // console.log(dom.querySelector(document, '#redirect'));
     // });
-    console.log(this);
-    System.import('crypto-js')
-      .then((crypto) => {
-        console.log(crypto.HmacSHA1("Messageaaa", "Secret Passphrase"));
-        let hash = crypto.HmacSHA1("Message", "Secret Passphrase")
-          .toString(crypto.enc.Base64);
-        console.log(hash);
-        console.log(crypto.MD5('Messagesaaa').toString(crypto.enc.Hex));
-      })
-      .catch((err) => {
-        console.error(err);
-      });
+  //  console.log(this);
+    // System.import('crypto-js')
+    //   .then((crypto) => {
+    //     console.log(crypto.HmacSHA1("Messageaaa", "Secret Passphrase"));
+    //     let hash = crypto.HmacSHA1("Message", "Secret Passphrase")
+    //       .toString(crypto.enc.Base64);
+    //     console.log(hash);
+    //     console.log(crypto.MD5('Messagesaaa').toString(crypto.enc.Hex));
+    //   })
+    //   .catch((err) => {
+    //     console.error(err);
+    //   });
     // let hash = CryptoJS.HmacSHA1("Message", "Secret Passphrase").toString(CryptoJS.enc.Base64);
     // console.log(hash);
   }
