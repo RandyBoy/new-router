@@ -5,6 +5,15 @@ import CommentForm  from './CommentForm';
 import ContentImage  from './ContentImage';
 import {CommentListComponent} from './commentList';
 
+export interface bbc { b: string[], c: {} }
+interface StringArray {
+    [index: number]: string;
+}
+interface NumberDictionary {
+    [index: string]: number;
+    length: number;
+}
+
 @Component({
     moduleId: module.id,
     selector: 'one-wb',
@@ -21,6 +30,22 @@ export default class OneWB implements OnInit {
 
     ngOnInit() {
         // this.commentFormProps = { imgUrl: this.oneData.headUrl, onAddComment: this.addComment };
+        let a = { a: 'b', b: ['a', 'b', 'c'], c: { c1: 'ab', c2: [1, 2] } };
+        let result = copy({ b: [], c: {} } as bbc, a);
+        let x = { a: 1, b: 2, c: 3, d: 4, f: 50 };
+
+        let copyField = copyFields({ b: [], c: {} } as bbc, a); // okay
+        console.log(copyField);
+        console.log(result);
+        let myArray: StringArray;
+        myArray = { 0: "Bob", 1: "Fred" }; // ["Bob", "Fred"];
+        console.log(myArray[0]);
+        console.log(myArray);
+        let mydict: NumberDictionary;
+        mydict = { 'abc': 1, 'def': 2, length: 3 };
+        console.log(mydict);
+        let {a1, b1} = { a1: "baz", b1: 101 };
+
     }
     handlerForwardClick(event: Event) {
         let innerText = (event.target as HTMLElement).innerText;
@@ -44,7 +69,7 @@ export default class OneWB implements OnInit {
             this.state.isComment = false;
         }
     }
-    
+
     addComment = (comment: string) => {
         console.log(comment);
         this.oneData.comments.push(comment);
@@ -67,6 +92,7 @@ export default class OneWB implements OnInit {
     };
 
     get commentFormProps() {
+
         return {
             imgUrl: this.oneData.headUrl,
             onAddComment: this.addComment
@@ -81,4 +107,37 @@ export default class OneWB implements OnInit {
     }
 
 
+}
+
+function extend<T, U>(first: T, second: U): T & U {
+    let result = <T & U>{};
+    for (let id in first) {
+        (<any>result)[id] = (<any>first)[id];
+    }
+    for (let id in second) {
+        if (!result.hasOwnProperty(id)) {
+            (<any>result)[id] = (<any>second)[id];
+        }
+    }
+    return result;
+}
+function copy<T, U>(first: T, second: U): T {
+    let result = <T>{};
+    Object.keys(first).forEach(key => {
+        if (second.hasOwnProperty(key)) {
+            result[key] = second[key];
+        }
+    });
+    return result;
+}
+function copyFields<T, U extends T>(target: T, source: U): T {
+    for (let id in target) {
+        target[id] = source[id];
+    }
+    return target;
+}
+//泛型工厂
+
+function create<T>(c: { new (): T; }): T {
+    return new c();
 }
