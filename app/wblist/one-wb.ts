@@ -4,6 +4,7 @@ import { WeiBoModel } from './wbModel';
 import CommentForm  from './CommentForm';
 import ContentImage  from './ContentImage';
 import {CommentListComponent} from './commentList';
+import {Parent, provideTheParent} from '../container/parent';
 
 export interface bbc { b: string[], c: {} }
 interface StringArray {
@@ -18,17 +19,24 @@ interface NumberDictionary {
     moduleId: module.id,
     selector: 'one-wb',
     templateUrl: 'onewb.html',
-    directives: [CommentForm, ContentImage, NgIf, CommentListComponent]
+    directives: [CommentForm, ContentImage, NgIf, CommentListComponent],
+    providers: [provideTheParent(OneWB)],
 })
-export default class OneWB implements OnInit {
+export default class OneWB extends Parent implements OnInit {
+
     @Input() oneData: WeiBoModel;
     state: { isComment?: boolean, isForward?: boolean, isCollect?: boolean, isPointGreat?: boolean };
     //  commentFormProps: { imgUrl: string, onAddComment: () => void }
     constructor() {
+        super(null);
         this.state = { isComment: false, isForward: false, isCollect: false, isPointGreat: false };
     }
 
+    treeDict: { [key: string]: { name: string, comp: any, childs: any[] } };
+
     ngOnInit() {
+        this.treeDict = { 'root': { name: 'root', comp: this, childs: [] } };
+        console.log(this);
         // this.commentFormProps = { imgUrl: this.oneData.headUrl, onAddComment: this.addComment };
         let a = { a: 'b', b: ['a', 'b', 'c'], c: { c1: 'ab', c2: [1, 2] } };
         let result = copy({ b: [], c: {} } as bbc, a);
@@ -104,6 +112,15 @@ export default class OneWB implements OnInit {
             onClearComments: this.clearComments,
             onDelComment: this.delComment
         }
+    }
+    get mySelf(): this {
+        return this;
+    }
+
+    invoke(target: any, method, params: any) {
+        // let t = target;
+        // t['method'].call(t)
+
     }
 
 

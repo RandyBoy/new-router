@@ -20,7 +20,7 @@
                 <li><span>赞</span > {{oneData.NoPointGreat}}</li>
             </ul>
         </div>
-        <CommentList bind-commentModel="commentListProps"></CommentList> 
-        <comment-form *ngIf="state?.isComment" [props] = "commentFormProps"> </comment-form>
+        <CommentList #commentlist  bind-commentModel="commentListProps"></CommentList> 
+        <comment-form #commentform  *ngIf="state?.isComment" [props] = "commentFormProps"> </comment-form>
     </div>
 </div>

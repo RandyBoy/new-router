@@ -1,4 +1,5 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy, Host, SkipSelf, Optional} from '@angular/core';
+import { Parent } from '../container/parent';
 
 @Component({
     moduleId: module.id,
@@ -7,15 +8,25 @@ import { Component, OnInit, Input } from '@angular/core';
              {{comment.content}} <span><button on-click="comment.onDelComment(comment.content)" >X</button></span>
     `
 })
-export class CommentComponent implements OnInit {
+export class CommentComponent extends Parent implements OnInit {
 
     @Input() comment: { content: string, onDelComment: (title: string) => void };
-    constructor() { }
+    constructor( @Optional() public parent: Parent) {
+        super(parent);
+    }
 
     ngOnInit() {
-        
-     }
 
-   
+        this.attach();
+
+    }
+
+    ngOnDestroy() {
+
+        this.dettach();
+
+    }
+
+
 
 }
