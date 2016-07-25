@@ -1,19 +1,16 @@
 import {provide, forwardRef} from "@angular/core";
+import uuid from '../utils/uuid';
 export abstract class Parent {
-    name: string;
+    name: string = uuid();
     childs: Parent[] = [];
-    /**
-     *
-     */
+
     constructor(public parent: Parent) {
-
-
+      
     }
     attach() {
         if (this.parent) {
             this.parent.childs.push(this);
         }
-
     }
     dettach() {
         if (this.parent) {
@@ -22,7 +19,6 @@ export abstract class Parent {
                 this.parent.childs.splice(idx, 1);
             }
         }
-
     }
 
 }
