@@ -16,15 +16,12 @@ export class CommentComponent extends Parent implements OnInit {
     }
 
     ngOnInit() {
-
         this.attach();
-
+        console.log(this.root.findComponentList(CommentComponent));
     }
 
     ngOnDestroy() {
-
         this.dettach();
-
     }
 
 

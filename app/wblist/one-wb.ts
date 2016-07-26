@@ -35,6 +35,7 @@ export default class OneWB extends Parent implements OnInit {
     treeDict: { [key: string]: { name: string, comp: any, childs: any[] } };
 
     ngOnInit() {
+        this.name = 'onewb';
         this.treeDict = { 'root': { name: 'root', comp: this, childs: [] } };
         console.log(this);
         // this.commentFormProps = { imgUrl: this.oneData.headUrl, onAddComment: this.addComment };
