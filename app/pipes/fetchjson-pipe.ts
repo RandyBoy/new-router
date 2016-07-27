@@ -1,0 +1,18 @@
+// import {Pipe, PipeTransform} from '@angular/core';
+
+// @Pipe({
+//       name: 'fetch',
+//       pure: false //代表纯 stateless 
+// })
+// export class FetchJsonPipe implements PipeTransform {
+//       private fetchedValue: any;
+//       private fetchPromise: Promise<any>;
+//       transform(value: string, args: string[]): any {
+//             if (!this.fetchPromise) {
+//                   this.fetchPromise = window.fetch(value)
+//                         .then((result: any) => result.json())
+//                         .then((json: any) => this.fetchedValue = json);
+//             }
+//             return this.fetchedValue;
+//       }
+// }

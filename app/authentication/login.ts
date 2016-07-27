@@ -1,12 +1,13 @@
-import { Component, ElementRef, Inject, ReflectiveInjector, provide, ComponentFactoryResolver} from '@angular/core';
+import { Component, ElementRef, Inject, ReflectiveInjector, provide, ComponentFactoryResolver, Attribute} from '@angular/core';
 import {JsonPipe} from '@angular/common';
 import { Router, ROUTER_DIRECTIVES, ActivatedRoute } from '@angular/router';
 import { CORE_DIRECTIVES } from '@angular/common';
-import { FORM_DIRECTIVES, REACTIVE_FORM_DIRECTIVES, FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
+import { FORM_DIRECTIVES, REACTIVE_FORM_DIRECTIVES, FormBuilder, FormGroup, Validators, FormControl, ValidatorFn, AbstractControl } from '@angular/forms';
 import {AuthService} from './auth.service';
 import { Observable } from 'rxjs/observable';
 import { AsyncValidatorFn } from '@angular/forms/src/directives/validators';
 import {FocusDirective  } from '../directives/FocusDirective';
+import {isBlank, isPresent, isPromise, isString} from '@angular/core/src/facade/lang';
 
 import * as Rx from 'rxjs/rx';
 import {dom} from '../utils/dom-service';
@@ -16,7 +17,7 @@ declare var System: any;
 
 
 @Component({
-    moduleId:module.id,
+    moduleId: module.id,
     selector: 'login',
     directives: [ROUTER_DIRECTIVES, CORE_DIRECTIVES, FORM_DIRECTIVES, REACTIVE_FORM_DIRECTIVES, FocusDirective],
     templateUrl: (() => { return './login.html'; })(),
@@ -34,12 +35,31 @@ export class Login extends Base {
     nameGroup = new FormGroup({
         first: new FormControl('', Validators.required),
         middle: new FormControl(''),
-        last: new FormControl('', Validators.required)
+        last: new FormControl('', [Validators.required, Validators.pattern(`${'^(13[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\\d{8}$'}`)])
     });
+    //((\\d{11})|^((\\d{7,8})|(\\d{4}|\\d{3})-(\\d{7,8})|(\\d{4}|\\d{3})-(\\d{7,8})-(\\d{4}|\\d{3}|\\d{2}|\\d{1})|(\\d{7,8})-(\\d{4}|\\d{3}|\\d{2}|\\d{1}))$)
+
+    a$: Rx.BehaviorSubject<any> = new Rx.BehaviorSubject<any>(0);
+    b$: Rx.BehaviorSubject<any> = new Rx.BehaviorSubject<any>(0);
+    c$: Rx.Observable<any>;
+
+
     myForm: FormGroup = new FormGroup({
         name: this.nameGroup,
         food: new FormControl()
     });
+
+    pattern(pattern: string): ValidatorFn {
+        return (control: AbstractControl): { [key: string]: any } => {
+            if (isPresent(Validators.required(control))) return null;
+            let regex = new RegExp(`${pattern}`);
+            console.log(regex);
+            let v: string = control.value;
+            return regex.test(v) ? null :
+                { 'pattern': { 'requiredPattern': `^${pattern}$`, 'actualValue': v } };
+        };
+    }
+
 
     constructor(
         private router: Router,
@@ -51,6 +71,12 @@ export class Login extends Base {
         console.log(cfr);
         this.elementRef = elementRef;
         // [focus]='true'
+
+        this.c$ = Rx.Observable
+            .concat(this.a$, this.b$)
+            .reduce((x, y) => x + y, 0);
+        this.c$.subscribe(x => console.log(x));
+
 
         this.loginForm = builder.group({
             login: ["", Validators.required],

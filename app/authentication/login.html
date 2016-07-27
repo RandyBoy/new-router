@@ -26,7 +26,7 @@
     <h3>Form value:</h3>
     <pre>{{value}}</pre>
 
-    <h2>Angular forms Example</h2>
+    <h2>Angular forms model Example</h2>
     <form #ff="ngForm">
         <div ngModelGroup="name" #mgName="ngModelGroup">
             <h3>Enter your name:</h3>
@@ -48,7 +48,7 @@
         <p>Element with existing control: <input class='form-control' type="text" [formControl]="loginControl" [(ngModel)]='loginModel'></p>
         <p>Value of existing control: {{loginControl.value}}--{{loginModel}}</p>
     </form>
-    <h2>Angular FormGroup Example</h2>
+    <h2>Angular FormGroup Model Example</h2>
     <form [formGroup]="myForm">
         <div formGroupName="name" class='form-group'>
             <h3>Enter your name:</h3>
@@ -64,4 +64,22 @@
         <h3>Form value</h3>
         <pre> {{ myForm.value | json }} </pre>
     </form>
+
+    <h2>Angular Model Change Example</h2>
+    <form [formGroup]="myForm">
+        <div formGroupName="name" class='form-group'>
+            <h3>Enter your name:</h3>
+            <p>First: <input class='form-control' formControlName="first"></p>
+            <p>Middle: <input class='form-control' formControlName="middle"></p>
+            <p>Last: <input class='form-control' formControlName="last"></p>
+        </div>
+        <h3>Name value:</h3>
+        <pre>{{ nameGroup.value | json }}</pre>
+        <p>Name is {{nameGroup?.valid ? "valid" : "invalid"}}</p>
+        <h3>What's your favorite food?</h3>
+        <p><input class='form-control' formControlName="food"></p>
+        <h3>Form value</h3>
+        <pre> {{ myForm.value | json }} </pre>
+    </form>
+
 </div>

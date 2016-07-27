@@ -18,4 +18,7 @@ export class DynamicComponent {
     login(event: any) {
         this.router.navigateByUrl('/login');
     }
+    showmessage(msg:string){
+        console.log(msg);
+    }
 }

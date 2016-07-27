@@ -4,7 +4,6 @@ import { APP_ROUTER_PROVIDERS} from './app.routes';
 import { APP_BASE_HREF, LocationStrategy, PathLocationStrategy  } from '@angular/common';
 import { HTTP_PROVIDERS, Http} from '@angular/http';
 import { provide } from '@angular/core';
-import { provideRouter } from '@angular/router';
 import { disableDeprecatedForms, provideForms } from '@angular/forms';
 import { AuthConfig, AuthHttp, JwtHelper } from 'angular2-jwt';
 

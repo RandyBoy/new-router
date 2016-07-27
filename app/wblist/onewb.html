@@ -1,0 +1,26 @@
+<div class="big-center">
+    <div class="one-wb ">
+        <div class="clearfix">
+            <div class="ow-left">
+                <img class="nick-img" [src]="oneData.headUrl" />
+            </div>
+            <div class="ow-right">
+                <div class="ow-nick row">
+                    <span>{{oneData.nickName}}</span>
+                </div>
+                <div class="ow-content row">{{oneData.content}}</div>
+                <content-image *ngIf="oneData.contentImgUrls" [contentImageUrls]="oneData.contentImgUrls"></content-image>
+            </div>
+        </div>
+        <div class="ow-footer row ">
+            <ul class="clearfix" (click)="handlerForwardClick($event)">
+                <li class="li-side-border"><span>收藏</span> {{oneData.NoCollect}}</li>
+                <li class="li-side-border"><span>转发</span> {{oneData.NoForward}}</li>
+                <li class="li-side-border"><span>评论</span> {{oneData.NoComment}}</li>
+                <li><span>赞</span > {{oneData.NoPointGreat}}</li>
+            </ul>
+        </div>
+        <CommentList #commentlist  bind-commentModel="commentListProps"></CommentList> 
+        <comment-form #commentform  *ngIf="state?.isComment" [props] = "commentFormProps"> </comment-form>
+    </div>
+</div>

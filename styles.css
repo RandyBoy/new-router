@@ -137,7 +137,7 @@ nav a.router-link-active {
 }
 
 .home {
-    border: 1px solid darken(white, 20%);
+    border: 1px solid darken(dodgerblue, 20%);
     margin: 20px;
     padding: 20px;
     background-color: #f8f8f8;
@@ -162,6 +162,9 @@ nav a.router-link-active {
   border-left: 5px solid #a94442; /* red */
 }
 
+ui.li.active >a{
+    background: #44558C;
+}
 
 /* everywhere else */
 * { 

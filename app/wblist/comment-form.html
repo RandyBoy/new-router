@@ -1,0 +1,9 @@
+<div class="row comment-form clearfix">
+    <div class="ow-left">
+        <img bind-src="props.imgUrl" alt="头像" class="little-head" />
+    </div>
+    <div class="ow-right">
+        <textarea #comment on-keyup.control.enter="props?.onAddComment(comment.value)" name="name" rows="8" cols="40" class="comment-box"></textarea>
+        <input class="comment-btn" type="button" value="评论" on-click="onCtrlEnter(comment.value)" />
+    </div>
+</div>
