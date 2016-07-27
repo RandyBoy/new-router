@@ -111,11 +111,11 @@ export abstract class Parent {
     }
 
     callMethod(method: string, params?: any[]) {
-        return this[method].call(this, params);
+        return this.hasOwnProperty(method) ? this[method].call(this, params) : null;
     }
 
-    getProperty(properyName: string) {
-        return this[properyName];
+    getProperty(propertyName: string) {
+        return this.hasOwnProperty(propertyName) ? this[propertyName] : null;
     }
 
     request3(req: { comp: string, method?: string, properyName?: string, params?: any[] }) {

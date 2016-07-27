@@ -32,10 +32,15 @@ export default class CommentForm extends Parent implements OnInit, OnDestroy {
     }
 
     onCtrlEnter(comment: string) {
-        this.props.onAddComment(comment); //(this.comment || { value: '无法获取值' }).value
+
+        this.props.onAddComment(comment);
+
+        this.root.request({ type: CallMethod, playload: { method: 'addComment2', params: [comment] } }, this.root.name);
+
+        this.root.notify({ type: CallMethod, playload: { method: 'show', params: ['通知方式调用'] } }, this.name);
+
         //  this.root.request({ comp: 'onewb', method: 'addComment', params: [comment] });
-        this.root.request({ type: CallMethod, playload: { method: 'addComment', params: [comment] } }, this.root.name);
-        this.root.notify({ type: CallMethod, playload: { method: 'show', params: ['收到了通知'] } }, this.name);
+
     }
 
     show(msg: string) {
