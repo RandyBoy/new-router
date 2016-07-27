@@ -78,25 +78,40 @@ export class AppComponent implements OnInit {
 
   _callApi(type, url) {
     this.response = null;
+    try {
+      if (type === 'Anonymous') {
+        // For non-protected routes, just use Http
+        this.http.get(url).catch(this.handleError)
+          .subscribe(
+          res => this.response = res.text(),
+          error => console.log(error)
+          );
+      }
 
-    if (type === 'Anonymous') {
-      // For non-protected routes, just use Http
-      this.http.get(url)
-        .subscribe(
-        response => this.response = response.text(),
-        error => this.response = error.text()
-        );
+      if (type === 'Secured') {
+        // For protected routes, use AuthHttp
+        this._authHttp.get(url).catch(this.handleError)
+          .subscribe(
+          res => this.response = res.text(),
+          error => console.log(error)
+          );
+      }
+    } catch (error) {
+      this.response = '无法连接服务器';
     }
 
-    if (type === 'Secured') {
-      // For protected routes, use AuthHttp
-      this._authHttp.get(url)
-        .subscribe(
-        response => this.response = response.text(),
-        error => this.response = error.text()
-        );
-    }
+
   }
+  private handleError(error: any) {
+    // In a real world app, we might use a remote logging infrastructure
+    // We'd also dig deeper into the error to get a better message
+    let errMsg = (error.message) ? error.message :
+      error.status ? `${error.status} - ${error.statusText}` : 'Server error';
+    //console.error(errMsg); // log to console instead
+    this.response = errMsg;
+    return Observable.throw(errMsg);
+  }
+
   ngOnInit() {
     //  System.import('app/g').then((dom) => {
     console.log(dom);
