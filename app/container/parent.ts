@@ -1,19 +1,29 @@
 import {provide, forwardRef, Optional, SkipSelf, Type} from "@angular/core";
-import {isType} from "@angular/common/src/facade/lang";
+import {isType, isString, isBlank, isArray} from "@angular/common/src/facade/lang";
 import uuid from '../utils/uuid';
-import {BehaviorSubject} from 'rxjs/rx';
+import {Subject} from 'rxjs/rx';
+
+export interface IAction {
+    target?: Parent[] | string | Type,
+    type: string;
+    playload: any
+}
+
+export const CallMethod = 'callMethod';
+export const CallProp = 'callProp';
 
 export abstract class Parent {
 
-    notifyStream: BehaviorSubject<{ type: string, playload: any }>;
+    dispatcherStream: Subject<IAction>;
     componentMap: { [key: string]: Parent };
     root: Parent = null;
     name: string = uuid();
     childs: Parent[] = [];
     constructor( @SkipSelf() @Optional() public parent: Parent) {
-        // this.root = this.parent ? this.parent.root : null;
-        this.notifyStream = new BehaviorSubject<any>({ type: '', playload: null });
-        this.notifyStream.subscribe(res => console.log(this.name + '接收到了通知,并且回应了消息.'));
+        this.dispatcherStream = new Subject<IAction>();
+        this.dispatcherStream.subscribe(action => {
+            this.dispatchAction(action);
+        });
     }
 
     attach() {
@@ -32,18 +42,28 @@ export abstract class Parent {
         }
     }
 
-    notify() {
-        let object = this.getComponentTree();
-        for (var key in object) {
-            if (object.hasOwnProperty(key)) {
+    notify(action: IAction, targetComp?: Parent[] | string | Type) {
+        if (isBlank(targetComp)) {
+            let object = this.getComponentTree();
+            for (let key in object) {
                 let target = object[key];
-                target.notifyStream.next({ type: 'abc', playload: null });
+                target.dispatcherStream.next(action);
             }
+        }
+        if (isString(targetComp)) {
+            let object = this.getComponentTree();
+            let target = object[targetComp];
+            target ? target.dispatcherStream.next(action) : null;
         }
     }
 
-    update() {
-
+    dispatchAction(action: IAction) {
+        if (action.type === CallMethod) {
+            return this.callMethod(action.playload.method, action.playload.params);
+        }
+        if (action.type === CallProp) {
+            return this.getProperty(action.playload.prop);
+        }
     }
 
     ngOnInit() {
@@ -98,7 +118,7 @@ export abstract class Parent {
         return this[properyName];
     }
 
-    request(req: { comp: string, method?: string, properyName?: string, params?: any[] }) {
+    request3(req: { comp: string, method?: string, properyName?: string, params?: any[] }) {
         let findComp = this.getComponent(req.comp);
         if (findComp) {
             if (req.method) {
@@ -106,6 +126,18 @@ export abstract class Parent {
             }
             if (req.properyName) {
                 return findComp.getProperty(req.properyName);
+            }
+        }
+        return null;
+    }
+    request(action: IAction, targetComp?: Parent[] | string | Type) {
+        if (isString(targetComp)) {
+            let findComp = this.getComponent(targetComp);
+            if (action.type === CallMethod) {
+                return findComp.callMethod(action.playload.method, action.playload.params);
+            }
+            if (action.type === CallProp) {
+                return findComp.getProperty(action.playload.prop);
             }
         }
         return null;

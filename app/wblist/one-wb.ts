@@ -118,12 +118,6 @@ export default class OneWB extends Parent implements OnInit {
         return this;
     }
 
-    invoke(target: any, method, params: any) {
-        // let t = target;
-        // t['method'].call(t)
-
-    }
-
 
 }
 

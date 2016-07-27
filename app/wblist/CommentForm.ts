@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, ViewEncapsulation, ViewChild, ElementRef, OnDestroy, Host, SkipSelf, Optional} from '@angular/core';
-import {Parent} from '../container/parent';
+import {Parent, IAction, CallMethod, CallProp} from '../container/parent';
 
 @Component({
     moduleId: module.id,
@@ -25,11 +25,7 @@ export default class CommentForm extends Parent implements OnInit, OnDestroy {
 
         this.callMethod('show', ['动态调用组件的方法']);
 
-        console.log(this.root.request({ comp: this.name, properyName: 'root' }));
-
-
-
-        // this.parent.childs.push(this);
+        console.log(this.root.request({ type: CallProp, playload: { prop: 'root' } }, this.name));
     }
     ngOnDestroy() {
         this.dettach();
@@ -38,10 +34,15 @@ export default class CommentForm extends Parent implements OnInit, OnDestroy {
     onCtrlEnter(comment: string) {
         this.props.onAddComment(comment); //(this.comment || { value: '无法获取值' }).value
         //  this.root.request({ comp: 'onewb', method: 'addComment', params: [comment] });
-        this.root.notify();
+        this.root.request({ type: CallMethod, playload: { method: 'addComment', params: [comment] } }, this.root.name);
+        this.root.notify({ type: CallMethod, playload: { method: 'show', params: ['收到了通知'] } }, this.name);
     }
 
     show(msg: string) {
         console.log("CommentForm:" + msg);
+    }
+
+    dispatchAction(action: IAction) {
+        super.dispatchAction(action);
     }
 }
