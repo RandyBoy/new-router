@@ -26,6 +26,8 @@ export default class CommentForm extends Parent implements OnInit, OnDestroy {
         this.callMethod('show', ['动态调用组件的方法']);
 
         console.log(this.root.request({ type: CallProp, playload: { prop: 'root' } }, this.name));
+
+        console.log(this.findComp('onewb', this));
     }
     ngOnDestroy() {
         this.dettach();

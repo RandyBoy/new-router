@@ -92,6 +92,22 @@ export abstract class Parent {
         let findComp = this.getComponentTree()[key];
         return findComp ? findComp as T : null;
     }
+    findComp(comp: string, startNode: Parent): Parent {
+        let result: Parent = null;
+        if (startNode.name === comp) {
+            return result = startNode;
+        }
+        if (startNode.parent) {
+            startNode.parent.childs.forEach(child => {
+                if (child.name === comp) {
+                    return result = child;
+                }
+            });
+            result = this.findComp(comp, startNode.parent);
+            if (result) return result;
+        }
+        return result;
+    }
 
     findComponentList(type: Type, first?: boolean): Parent | Parent[] {
         let typeList = new Array<Parent>();
@@ -132,7 +148,8 @@ export abstract class Parent {
     }
     request(action: IAction, targetComp?: Parent[] | string | Type) {
         if (isString(targetComp)) {
-            let findComp = this.getComponent(targetComp);
+            let findComp = this.findComp(targetComp, this) || this.getComponent(targetComp);
+
             if (action.type === CallMethod) {
                 return findComp.callMethod(action.playload.method, action.playload.params);
             }
