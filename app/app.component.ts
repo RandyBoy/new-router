@@ -11,6 +11,8 @@ import {dom} from './utils/dom-service';
 import { Http } from '@angular/http';
 import { Loading } from './loading/loading';
 import { URLSearchParams, QueryEncoder } from '@angular/http';
+import {EventService} from './utils/eventService';
+import {Base, IAction, CallMethod, CallProp, provideParent, provideTheParent} from './container/base';
 
 
 declare var System;
@@ -20,17 +22,20 @@ declare var System;
   selector: 'my-app',
   templateUrl: './app.component.html',
   directives: [ROUTER_DIRECTIVES, COMMON_DIRECTIVES, CollapseDirective, Loading],
-  providers: [HeroService, DialogService],
+  providers: [HeroService, DialogService, EventService, provideTheParent(AppComponent)],
   precompile: [],
   encapsulation: ViewEncapsulation.None
 })
-export class AppComponent implements OnInit {
-  /**
-   * [queryParams]="{name: 'cirsis-center',token:'jwttoken'}" fragment="ccfragment"
-   * [queryParams] = " { name :'Heroes',token:'angular2-jwt-token'}
-   */
+export class AppComponent extends Base implements OnInit {
 
-  name: Observable<string>;
+  // /**
+  //  * [queryParams]="{name: 'cirsis-center',token:'jwttoken'}" fragment="ccfragment"
+  //  * [queryParams] = " { name :'Heroes',token:'angular2-jwt-token'}
+  //  */
+
+
+
+  name2: Observable<string>;
   token: Observable<string>;
   fragment: Observable<string>;
   response: string;
@@ -42,9 +47,13 @@ export class AppComponent implements OnInit {
     private authService: AuthService,
     private jwtHelper: JwtHelper,
     private http: Http,
-    private _authHttp: AuthHttp
+    private _authHttp: AuthHttp,
+
+    public eventService: EventService
   ) {
-    this.name = this.router.routerState.queryParams.map(p => p['name']);
+    super(null);
+    this.name = "mainapp";
+    this.name2 = this.router.routerState.queryParams.map(p => p['name']);
     this.token = this.router.routerState.queryParams.map(p => p['token']);
     this.fragment = this.router.routerState.fragment;
     this.logout();
@@ -115,6 +124,10 @@ export class AppComponent implements OnInit {
     this.logout();
     this.router.navigateByUrl('/login');
   }
+  getchild() {
+    console.log(this.findChildComp('onewb', this) || '怎么会没有找到组件呢');
+    console.log(this.getCompTree());
+  }
   get jwt() {
     return this.authService.jwt;
   }
@@ -173,11 +186,13 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.setAncestor();
+    console.log(this.getCompTree());
     //  System.import('app/g').then((dom) => {
-  //  console.log(dom);
-   // console.log(dom.querySelector(document, '#redirect'));
+    //  console.log(dom);
+    // console.log(dom.querySelector(document, '#redirect'));
     // });
-  //  console.log(this);
+    //  console.log(this);
     // System.import('crypto-js')
     //   .then((crypto) => {
     //     console.log(crypto.HmacSHA1("Messageaaa", "Secret Passphrase"));

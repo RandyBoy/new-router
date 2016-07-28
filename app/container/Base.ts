@@ -4,7 +4,7 @@ import uuid from '../utils/uuid';
 import {Subject} from 'rxjs/rx';
 
 export interface IAction {
-    target?: Parent[] | string | Type,
+    target?: Base[] | string | Type,
     type: string;
     playload: any
 }
@@ -12,14 +12,15 @@ export interface IAction {
 export const CallMethod = 'callMethod';
 export const CallProp = 'callProp';
 
-export abstract class Parent {
+export abstract class Base {
 
     dispatcherStream: Subject<IAction>;
-    componentMap: { [key: string]: Parent };
-    root: Parent = null;
+    componentMap: { [key: string]: Base };
+    root: Base = null;
+    ancestor: Base = null;
     name: string = uuid();
-    childs: Parent[] = [];
-    constructor( @SkipSelf() @Optional() public parent: Parent) {
+    childs: Base[] = [];
+    constructor( @SkipSelf() @Optional() public parent: Base) {
         this.dispatcherStream = new Subject<IAction>();
         this.dispatcherStream.subscribe(action => {
             this.dispatchAction(action);
@@ -29,6 +30,7 @@ export abstract class Parent {
     attach() {
         if (this.parent) {
             this.root = this.parent.root;
+            this.ancestor = this.parent.ancestor;
             this.parent.childs.push(this);
         }
     }
@@ -42,7 +44,7 @@ export abstract class Parent {
         }
     }
 
-    notify(action: IAction, targetComp?: Parent[] | string | Type) {
+    notify(action: IAction, targetComp?: Base[] | string | Type) {
         if (isBlank(targetComp)) {
             let object = this.getComponentTree();
             for (let key in object) {
@@ -74,12 +76,23 @@ export abstract class Parent {
         this.dettach();
     }
 
+    getCompTree() {
+        let expand = (comp: Base): Map<string, Base> => {
+            let dict: Map<string, Base> = new Map<string, Base>();
+            dict[comp.name] = comp;
+            comp.childs.forEach(c => {
+                dict = Object.assign(dict, expand(c));
+            });
+            return dict;
+        }
+        return expand(this);
+    }
+
     getComponentTree() {
-        let expand = (nodeObj: Parent): { [key: string]: Parent } => {
-            let dict: { [key: string]: Parent } = {};
-            nodeObj.root = this;
-            dict[nodeObj.name] = nodeObj;
-            nodeObj.childs.forEach(node => {
+        let expand = (comp: Base): { [key: string]: Base } => {
+            let dict: { [key: string]: Base } = {};
+            dict[comp.name] = comp;
+            comp.childs.forEach(node => {
                 dict = Object.assign(dict, expand(node));
             });
             return dict;
@@ -87,31 +100,88 @@ export abstract class Parent {
         return this.componentMap = expand(this);
     }
 
-    findComponent<T extends Parent>(comp: string): T {
-        let key: string = <string>comp;
-        let findComp = this.getComponentTree()[key];
-        return findComp ? findComp as T : null;
+    expand(comp: Base, callback: (comp: Base) => void) {
+        callback(comp);
+        comp.childs.forEach(c => {
+            this.expand(c, callback);
+        });
     }
-    findComp(comp: string, startNode: Parent): Parent {
-        let result: Parent = null;
-        if (startNode.name === comp) {
-            return result = startNode;
+
+    setRoot() {
+        return this.expand(this, (comp) => { comp.root = this });
+    }
+    setAncestor() {
+        return this.expand(this, (comp) => { comp.ancestor = this });
+    }
+
+    findChildComp(comp: string | Type, startComp: Base): Base {
+        let result: Base = null;
+        if (isString(comp)) {
+            if (startComp.name === comp) {
+                return result = startComp;
+            }
+        } else if (isType(comp)) {
+            if (startComp instanceof comp) {
+                return result = startComp;
+            }
         }
-        if (startNode.parent) {
-            startNode.parent.childs.forEach(child => {
+        startComp.childs.forEach(child => {
+            if (isString(comp)) {
                 if (child.name === comp) {
                     return result = child;
                 }
+            } else if (isType(comp)) {
+                if (child instanceof comp) return result = child;
+            }
+        });
+        startComp.childs.forEach(element => {
+            result = this.findChildComp(comp, element);
+            if (result) return result;
+        });
+        return result;
+    }
+
+    findComponent<T extends Base>(comp: string): T {
+        let key: string = <string>comp;
+        let findComp = this.getCompTree()[key];
+        return findComp ? findComp as T : null;
+    }
+
+    findComp(comp: string | Type, startComp: Base): Base {
+        let result: Base = null;
+        if (isString(comp)) {
+            if (startComp.name === comp) {
+                return result = startComp;
+            }
+        } else if (isType(comp)) {
+            if (startComp instanceof comp) {
+                return result = startComp;
+            }
+        }
+
+        if (startComp.parent) {
+            startComp.parent.childs.forEach(child => {
+                if (isString(comp)) {
+                    if (child.name === comp) {
+                        return result = child;
+                    }
+                } else if (isType(comp)) {
+                    if (child instanceof comp) return result = child;
+                }
             });
-            result = this.findComp(comp, startNode.parent);
+            result = this.findComp(comp, startComp.parent);
             if (result) return result;
         }
         return result;
     }
 
-    findComponentList(type: Type, first?: boolean): Parent | Parent[] {
-        let typeList = new Array<Parent>();
-        let object = this.getComponentTree();
+    getComp<T extends Base>(comp: string | Type, startNode: Base): T {
+        return this.findComp(comp, startNode) as T;
+    }
+
+    findComponentList(type: Type, first?: boolean): Base | Base[] {
+        let typeList = new Array<Base>();
+        let object = this.getCompTree();
         for (let key in object) {
             let element = object[key];
             if (element instanceof type) {
@@ -146,10 +216,9 @@ export abstract class Parent {
         }
         return null;
     }
-    request(action: IAction, targetComp?: Parent[] | string | Type) {
+    request(action: IAction, targetComp?: Base[] | string | Type) {
         if (isString(targetComp)) {
             let findComp = this.findComp(targetComp, this) || this.getComponent(targetComp);
-
             if (action.type === CallMethod) {
                 return findComp.callMethod(action.playload.method, action.playload.params);
             }
@@ -161,6 +230,6 @@ export abstract class Parent {
     }
 }
 
-export const provideParent = (component: any, parentType?: any) => provide(parentType || Parent, { useExisting: forwardRef(() => component) });
+export const provideParent = (component: any, parentType?: any) => provide(parentType || Base, { useExisting: forwardRef(() => component) });
 
-export const provideTheParent = (component: any) => provide(Parent, { useExisting: forwardRef(() => component) });
+export const provideTheParent = (component: any) => provide(Base, { useExisting: forwardRef(() => component) });

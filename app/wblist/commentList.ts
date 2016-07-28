@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, OnDestroy,SkipSelf,Host,Optional} from '@angular/core';
 import { NgFor } from '@angular/common';
 import {CommentComponent} from './comment';
-import {Parent,provideTheParent} from '../container/parent';
+import {Base,provideTheParent} from '../container/base';
 
 @Component({
     moduleId: module.id,
@@ -18,11 +18,11 @@ import {Parent,provideTheParent} from '../container/parent';
                </div>
     `
 })
-export class CommentListComponent extends Parent implements OnInit, OnDestroy {
+export class CommentListComponent extends Base implements OnInit, OnDestroy {
     @Input() commentModel: { comments: string[], onClearComments?: () => void, onDelComment?: (title: string) => void };
     @Input() context: any = {};
 
-    constructor( @SkipSelf() @Optional() public parent: Parent) {
+    constructor( @SkipSelf() @Optional() public parent: Base) {
         super(parent);
         this.commentModel = this.commentModel || { comments: [] };
     }
