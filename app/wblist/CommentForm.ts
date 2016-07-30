@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewEncapsulation, ViewChild, ElementRef, OnDestroy, Host, SkipSelf, Optional, ApplicationRef} from '@angular/core';
+import { Component, OnInit, Input, ViewEncapsulation, ViewChild, ElementRef, OnDestroy, Host, SkipSelf, Optional} from '@angular/core';
 import {Base, IAction, CallMethod, CallProp} from '../container/base';
 import {AppComponent} from '../app.component';
 
@@ -11,7 +11,7 @@ export default class CommentForm extends Base implements OnInit, OnDestroy {
     @Input() props: { imgUrl: string, onAddComment: (content: string) => void };
     @Input() context: {};
     @ViewChild('comment') comment: ElementRef;
-    constructor( @Optional() @SkipSelf() public parent: Base, private appRef: ApplicationRef) {
+    constructor( @Optional() @SkipSelf() public parent: Base) {
         super(parent);
         // this.props = this.props || { imgUrl: 'null', onAddComment: () => { } };
     }
@@ -29,7 +29,6 @@ export default class CommentForm extends Base implements OnInit, OnDestroy {
 
         console.log(this.root.request({ sender: this, target: this, type: CallProp, playload: { prop: 'root' } }, this.name));
         console.log(this.ancestor);
-        console.log(this.appRef);
         // console.log(this.findComp(AppComponent, this));
 
     }
@@ -56,17 +55,8 @@ export default class CommentForm extends Base implements OnInit, OnDestroy {
             }
         }, this.name);
 
-        // this.ancestor.globalEventDispatcher.notifyDataChanged({
-        //     sender: this,
-        //     target: this,
-        //     type: 'onMessage',
-        //     playload: {
-        //         method: 'show',
-        //         params: ['通知方式调用']
-        //     }
-        // });
 
-        this.ancestor.globalEventDispatcher.notifyDataChanged({
+        this.ancestor.ged.notify({
             sender: this,
             target: this,
             type: CallMethod,
@@ -74,7 +64,7 @@ export default class CommentForm extends Base implements OnInit, OnDestroy {
                 method: 'show',
                 params: ['全局通知方式调用-globalEvent']
             }
-        }).notifyDataChanged({
+        }).notify({
             sender: this,
             target: this,
             type: 'onMessage',

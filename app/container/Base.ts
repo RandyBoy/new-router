@@ -22,7 +22,7 @@ export abstract class Base {
     ancestor: Base = null;
     name: string = uuid();
     childs: Base[] = [];
-    globalEventDispatcher: GlobalEventDispatcher; //只有祖先组件才分配值，其它组件可以直接访问
+    ged: GlobalEventDispatcher; //只有祖先组件才分配值，其它组件可以直接访问
     constructor( @SkipSelf() @Optional() public parent: Base) {
         this.dispatcherStream = new Subject<IAction>();
         this.dispatcherStream
@@ -103,7 +103,7 @@ export abstract class Base {
                 return this.getProperty(action.playload.prop);
             }
             if (action.type === 'onMessage') {
-                console.log(this.ancestor.globalEventDispatcher);
+                console.log(this.ancestor.ged);
             }
         }
     }
@@ -114,8 +114,8 @@ export abstract class Base {
      */
     ngOnInit() {
         this.attach();
-        if (this.ancestor && this.ancestor.globalEventDispatcher) {
-            this.ancestor.globalEventDispatcher
+        if (this.ancestor && this.ancestor.ged) {
+            this.ancestor.ged
                 .subscribe('onMessage', this.regFun)
                 .subscribe('onCallMethod', this.regFun)
                 .subscribe('onCallProp', this.regFun);
@@ -126,8 +126,8 @@ export abstract class Base {
      */
     ngOnDestroy() {
         this.dettach();
-        if (this.ancestor && this.ancestor.globalEventDispatcher) {
-            this.ancestor.globalEventDispatcher
+        if (this.ancestor && this.ancestor.ged) {
+            this.ancestor.ged
                 .unSubscribe('onMessage', this.regFun)
                 .unSubscribe('onCallMethod', this.regFun)
                 .unSubscribe('onCallProp', this.regFun);

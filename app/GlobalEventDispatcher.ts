@@ -4,45 +4,41 @@ import {IAction} from './container/base';
 
 @Injectable()
 export class GlobalEventDispatcher {
-    private onMessageConst: string = "onMessage";
-    private _data = new Subject<IAction>();
-    private _dataStream$ = this._data.asObservable();
+    private _globalEvent = new Subject<IAction>();
+    private _globalEventStream$ = this._globalEvent.asObservable();
 
     private _subscriptions: Map<string, Array<Function>> = new Map<string, Array<Function>>();
 
     constructor() {
-        this._dataStream$.subscribe((data) => this._onEvent(data));
+        this._globalEventStream$.subscribe((eventArgs) => this._onEvent(eventArgs));
     }
 
-    notifyDataChanged(eventArgs: IAction): this {
+    notify(eventArgs: IAction): this {
 
-        let current = this._data[eventArgs.type];
+        let current = this._globalEvent[eventArgs.type];
         if (current != eventArgs) {
-            this._data[eventArgs.type] = eventArgs;
+            this._globalEvent[eventArgs.type] = eventArgs;
 
-            this._data.next(eventArgs);
+            this._globalEvent.next(eventArgs);
         }
         return this;
     }
 
-    subscribe(event: string, callback: Function): this {
+    subscribe(event: string, actionHandler: Function): this {
         let subscribers = this._subscriptions.get(event) || [];
-        subscribers.push(callback);
+        subscribers.push(actionHandler);
 
         this._subscriptions.set(event, subscribers);
         return this;
     }
 
-    unSubscribe(event: string, callback: Function): this {
+    unSubscribe(event: string, actionHandler: Function): this {
         let subscribers = this._subscriptions.get(event) || [];
-        subscribers = subscribers.filter((cb) => cb != callback);
+        subscribers = subscribers.filter((cb) => cb != actionHandler);
         // let idx = subscribers.indexOf(callback);
         // if (idx > -1) {
         //     delete subscribers[idx];
         // }
-        //  event.callbacks = event.callbacks.filter(function (cb) {
-        //         return cb != callback;
-        //     });
         this._subscriptions.set(event, subscribers);
         return this;
     }
@@ -50,7 +46,7 @@ export class GlobalEventDispatcher {
     private _onEvent(eventArgs: IAction) {
         let subscribers = this._subscriptions.get(eventArgs.type) || [];
 
-        subscribers.forEach((callback) => {
+        subscribers.forEach((callback) => { 
             callback.call(null, eventArgs);
         });
     }

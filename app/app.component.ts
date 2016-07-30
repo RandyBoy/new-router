@@ -53,7 +53,7 @@ export class AppComponent extends Base implements OnInit {
   ) {
     super(null);
     this.ancestor = this;
-    this.globalEventDispatcher = globalEventDispatch;
+    this.ged = globalEventDispatch;
     this.name = "mainapp";
     this.name2 = this.router.routerState.queryParams.map(p => p['name']);
     this.token = this.router.routerState.queryParams.map(p => p['token']);
