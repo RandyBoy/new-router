@@ -84,7 +84,6 @@ export default class OneWB extends Base implements OnInit {
     }
 
     addComment = (comment: string) => {
-        console.log(comment);
         this.oneData.comments.push(comment);
         this.oneData.NoComment += 1;
         this.state.isComment = false;
@@ -96,7 +95,6 @@ export default class OneWB extends Base implements OnInit {
             this.oneData.comments.splice(idx, 1);
             this.oneData.NoComment -= 1;
         }
-        console.log(this.oneData.comments);
     }
 
     clearComments = () => {

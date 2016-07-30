@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, OnDestroy, Host, SkipSelf, Optional} from '@angular/core';
-import { Base } from '../container/base';
+import { Base } from '../container/Base';
 
 @Component({
     moduleId: module.id,
@@ -17,7 +17,7 @@ export class CommentComponent extends Base implements OnInit {
 
     ngOnInit() {
         this.attach();
-       // console.log(this.root.findComponentList(CommentComponent));
+        // console.log(this.root.findComponentList(CommentComponent));
     }
 
     ngOnDestroy() {

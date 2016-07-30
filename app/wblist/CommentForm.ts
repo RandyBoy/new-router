@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, ViewEncapsulation, ViewChild, ElementRef, OnDestroy, Host, SkipSelf, Optional} from '@angular/core';
-import {Base, IAction, CallMethod, CallProp} from '../container/base';
+import {Base, IAction, CallMethod, CallProp} from '../container/Base';
 import {AppComponent} from '../app.component';
 
 @Component({
@@ -24,11 +24,12 @@ export default class CommentForm extends Base implements OnInit, OnDestroy {
 
         // console.log(this.parent.findComponentList(CommentForm));
 
-        // this.callMethod('show', ['动态调用组件的方法']);
+         this.callMethod('show', ['动态调用组件的方法']);
 
         // console.log(this.root.request({ type: CallProp, playload: { prop: 'root' } }, this.name));
 
         // console.log(this.findComp(AppComponent, this));
+        
     }
     ngOnDestroy() {
         this.dettach();
@@ -38,12 +39,12 @@ export default class CommentForm extends Base implements OnInit, OnDestroy {
 
         this.props.onAddComment(comment);
         let app = this.ancestor as AppComponent;
-        app.eventService.emit({ target: 'onewb', type: "show" });
+      //  app.eventService.emit({ target: 'onewb', type: "show" });
         this.findComp(AppComponent, this);
 
         // this.root.request({ type: CallMethod, playload: { method: 'addComment2', params: [comment] } }, this.root.name);
-
-        // this.root.notify({ type: CallMethod, playload: { method: 'show', params: ['通知方式调用'] } }, this.name);
+     
+        this.root.notify({ sender: this, target: 'abc', type: CallMethod, playload: { method: 'show', params: ['通知方式调用'] } },this.name);
 
         //  this.root.request({ comp: 'onewb', method: 'addComment', params: [comment] });
 
@@ -54,6 +55,7 @@ export default class CommentForm extends Base implements OnInit, OnDestroy {
     }
 
     dispatchAction(action: IAction) {
+        console.log(action);
         super.dispatchAction(action);
     }
 }

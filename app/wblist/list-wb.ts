@@ -22,7 +22,7 @@ export class ListWb extends Base implements OnInit, AfterViewInit {
 
     ngOnInit() {
 
-        this.wbDatas = this.weiBoStore ? this.weiBoStore.GetALLWeiBo() : null;
+        this.wbDatas = this.wbDatas || this.weiBoStore ? this.weiBoStore.GetALLWeiBo() : null;
         this.attach();
         this.setRoot();
     }
@@ -34,7 +34,7 @@ export class ListWb extends Base implements OnInit, AfterViewInit {
     }
 
     ngAfterContentInit() {
-     
+
     }
 
 }

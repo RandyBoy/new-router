@@ -126,7 +126,6 @@ export class AppComponent extends Base implements OnInit {
   }
   getchild() {
     console.log(this.findChildComp('onewb', this) || '怎么会没有找到组件呢');
-    console.log(this.getCompTree());
   }
   get jwt() {
     return this.authService.jwt;
@@ -187,7 +186,7 @@ export class AppComponent extends Base implements OnInit {
 
   ngOnInit() {
     this.setAncestor();
-    console.log(this.getCompTree());
+   // console.log(this.getCompTree());
     //  System.import('app/g').then((dom) => {
     //  console.log(dom);
     // console.log(dom.querySelector(document, '#redirect'));

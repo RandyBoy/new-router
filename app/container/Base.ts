@@ -1,10 +1,11 @@
-import {provide, forwardRef, Optional, SkipSelf, Type} from "@angular/core";
+import {provide, forwardRef, Optional, SkipSelf, Type, ReflectiveInjector} from "@angular/core";
 import {isType, isString, isBlank, isArray} from "@angular/common/src/facade/lang";
 import uuid from '../utils/uuid';
 import {Subject} from 'rxjs/rx';
 
 export interface IAction {
-    target?: Base[] | string | Type,
+    sender: any;
+    target: any;
     type: string;
     playload: any
 }
@@ -22,9 +23,11 @@ export abstract class Base {
     childs: Base[] = [];
     constructor( @SkipSelf() @Optional() public parent: Base) {
         this.dispatcherStream = new Subject<IAction>();
-        this.dispatcherStream.subscribe(action => {
-            this.dispatchAction(action);
-        });
+        this.dispatcherStream
+            .filter(msg => (msg.target.name === this.name || msg.target === this))
+            .subscribe(action => { // && (msg.sender != this || msg.sender.name != this.name)      
+                this.dispatchAction(action);
+            });
     }
 
     attach() {
@@ -46,21 +49,27 @@ export abstract class Base {
 
     notify(action: IAction, targetComp?: Base[] | string | Type) {
         if (isBlank(targetComp)) {
-            let object = this.getComponentTree();
-            for (let key in object) {
-                let target = object[key];
+            let compMap = this.getComponentTree();
+            for (let key in compMap) {
+                let target = compMap[key];
                 target.dispatcherStream.next(action);
             }
+            // compMap.forEach((t: Base, index: string, map) => {
+            //     t.dispatcherStream.next(action);
+            // });
         }
         if (isString(targetComp)) {
-            let object = this.getComponentTree();
-            let target = object[targetComp];
-            target ? target.dispatcherStream.next(action) : null;
+            let comps = this.getComponentTree();
+            let target = comps[targetComp]; //this.findChildComp(targetComp, this); 
+            let act = action;
+            act.target = target;
+            target ? target.dispatcherStream.next(act) : null;
         }
     }
 
     dispatchAction(action: IAction) {
         if (action.type === CallMethod) {
+            console.log(action);
             return this.callMethod(action.playload.method, action.playload.params);
         }
         if (action.type === CallProp) {
@@ -181,7 +190,7 @@ export abstract class Base {
 
     findComponentList(type: Type, first?: boolean): Base | Base[] {
         let typeList = new Array<Base>();
-        let object = this.getCompTree();
+        let object = this.getComponentTree();
         for (let key in object) {
             let element = object[key];
             if (element instanceof type) {

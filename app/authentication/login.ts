@@ -11,7 +11,7 @@ import {isBlank, isPresent, isPromise, isString} from '@angular/core/src/facade/
 
 import * as Rx from 'rxjs/rx';
 import {dom} from '../utils/dom-service';
-import {Base} from '../base';
+import {Base2} from '../base2';
 
 declare var System: any;
 
@@ -24,7 +24,7 @@ declare var System: any;
     providers: [FormBuilder],
     pipes: [JsonPipe]
 })
-export class Login extends Base {
+export class Login extends Base2 {
     elementRef: ElementRef;
     loginForm: FormGroup;
     defaultPage: string = '/crisis-center';
