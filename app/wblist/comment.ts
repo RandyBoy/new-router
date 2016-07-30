@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, OnDestroy, Host, SkipSelf, Optional} from '@angular/core';
-import { Base } from '../container/Base';
+import { Base } from '../container/base';
 
 @Component({
     moduleId: module.id,
@@ -11,7 +11,7 @@ import { Base } from '../container/Base';
 export class CommentComponent extends Base implements OnInit {
 
     @Input() comment: { content: string, onDelComment: (title: string) => void };
-    constructor( @Optional() public parent: Base) {
+    constructor( @Optional() @SkipSelf() public parent: Base) {
         super(parent);
     }
 

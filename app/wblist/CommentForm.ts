@@ -1,5 +1,5 @@
-import { Component, OnInit, Input, ViewEncapsulation, ViewChild, ElementRef, OnDestroy, Host, SkipSelf, Optional} from '@angular/core';
-import {Base, IAction, CallMethod, CallProp} from '../container/Base';
+import { Component, OnInit, Input, ViewEncapsulation, ViewChild, ElementRef, OnDestroy, Host, SkipSelf, Optional, ApplicationRef} from '@angular/core';
+import {Base, IAction, CallMethod, CallProp} from '../container/base';
 import {AppComponent} from '../app.component';
 
 @Component({
@@ -11,40 +11,78 @@ export default class CommentForm extends Base implements OnInit, OnDestroy {
     @Input() props: { imgUrl: string, onAddComment: (content: string) => void };
     @Input() context: {};
     @ViewChild('comment') comment: ElementRef;
-    constructor( @Optional() @SkipSelf() public parent: Base) {
+    constructor( @Optional() @SkipSelf() public parent: Base, private appRef: ApplicationRef) {
         super(parent);
         // this.props = this.props || { imgUrl: 'null', onAddComment: () => { } };
     }
 
     ngOnInit() {
-        // console.log(this);
-        this.attach();
+
+        super.ngOnInit();
+        //订阅全局事件
         // console.log(this.parent.findComponent<CommentForm>(this.name));
         // this.parent.findComponent<CommentForm>(this.name).show('成功找到组件');
 
         // console.log(this.parent.findComponentList(CommentForm));
 
-         this.callMethod('show', ['动态调用组件的方法']);
 
-        // console.log(this.root.request({ type: CallProp, playload: { prop: 'root' } }, this.name));
 
+        console.log(this.root.request({ sender: this, target: this, type: CallProp, playload: { prop: 'root' } }, this.name));
+        console.log(this.ancestor);
+        console.log(this.appRef);
         // console.log(this.findComp(AppComponent, this));
-        
+
     }
     ngOnDestroy() {
-        this.dettach();
+        super.ngOnDestroy();
     }
 
     onCtrlEnter(comment: string) {
 
         this.props.onAddComment(comment);
-        let app = this.ancestor as AppComponent;
-      //  app.eventService.emit({ target: 'onewb', type: "show" });
-        this.findComp(AppComponent, this);
+        // let app = this.ancestor as AppComponent;
+        //  app.eventService.emit({ target: 'onewb', type: "show" });
+        // this.findComp(AppComponent, this);
 
         // this.root.request({ type: CallMethod, playload: { method: 'addComment2', params: [comment] } }, this.root.name);
-     
-        this.root.notify({ sender: this, target: 'abc', type: CallMethod, playload: { method: 'show', params: ['通知方式调用'] } },this.name);
+
+        this.root.notify({
+            sender: this,
+            target: 'abc',
+            type: CallMethod,
+            playload: {
+                method: 'show',
+                params: ['通知方式调用']
+            }
+        }, this.name);
+
+        // this.ancestor.globalEventDispatcher.notifyDataChanged({
+        //     sender: this,
+        //     target: this,
+        //     type: 'onMessage',
+        //     playload: {
+        //         method: 'show',
+        //         params: ['通知方式调用']
+        //     }
+        // });
+
+        this.ancestor.globalEventDispatcher.notifyDataChanged({
+            sender: this,
+            target: this,
+            type: CallMethod,
+            playload: {
+                method: 'show',
+                params: ['全局通知方式调用-globalEvent']
+            }
+        }).notifyDataChanged({
+            sender: this,
+            target: this,
+            type: 'onMessage',
+            playload: {
+                method: 'onMessage',
+                params: ['通知方式调用']
+            }
+        });
 
         //  this.root.request({ comp: 'onewb', method: 'addComment', params: [comment] });
 
@@ -55,7 +93,13 @@ export default class CommentForm extends Base implements OnInit, OnDestroy {
     }
 
     dispatchAction(action: IAction) {
-        console.log(action);
         super.dispatchAction(action);
+    }
+
+    globalDispatchAction(action: IAction) {
+        super.globalDispatchAction(action);
+        if (action.type === 'onMessage') {
+            console.log(this.ancestor);
+        }
     }
 }

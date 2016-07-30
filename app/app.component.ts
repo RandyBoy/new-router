@@ -13,6 +13,7 @@ import { Loading } from './loading/loading';
 import { URLSearchParams, QueryEncoder } from '@angular/http';
 import {EventService} from './utils/eventService';
 import {Base, IAction, CallMethod, CallProp, provideParent, provideTheParent} from './container/base';
+import {GlobalEventDispatcher} from './GlobalEventDispatcher';
 
 
 declare var System;
@@ -22,7 +23,7 @@ declare var System;
   selector: 'my-app',
   templateUrl: './app.component.html',
   directives: [ROUTER_DIRECTIVES, COMMON_DIRECTIVES, CollapseDirective, Loading],
-  providers: [HeroService, DialogService, EventService, provideTheParent(AppComponent)],
+  providers: [HeroService, DialogService, GlobalEventDispatcher, provideTheParent(AppComponent)],
   precompile: [],
   encapsulation: ViewEncapsulation.None
 })
@@ -48,10 +49,11 @@ export class AppComponent extends Base implements OnInit {
     private jwtHelper: JwtHelper,
     private http: Http,
     private _authHttp: AuthHttp,
-
-    public eventService: EventService
+    globalEventDispatch: GlobalEventDispatcher
   ) {
     super(null);
+    this.ancestor = this;
+    this.globalEventDispatcher = globalEventDispatch;
     this.name = "mainapp";
     this.name2 = this.router.routerState.queryParams.map(p => p['name']);
     this.token = this.router.routerState.queryParams.map(p => p['token']);
@@ -186,7 +188,7 @@ export class AppComponent extends Base implements OnInit {
 
   ngOnInit() {
     this.setAncestor();
-   // console.log(this.getCompTree());
+    // console.log(this.getCompTree());
     //  System.import('app/g').then((dom) => {
     //  console.log(dom);
     // console.log(dom.querySelector(document, '#redirect'));

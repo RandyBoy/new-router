@@ -2,6 +2,7 @@ import {provide, forwardRef, Optional, SkipSelf, Type, ReflectiveInjector} from 
 import {isType, isString, isBlank, isArray} from "@angular/common/src/facade/lang";
 import uuid from '../utils/uuid';
 import {Subject} from 'rxjs/rx';
+import {GlobalEventDispatcher} from '../GlobalEventDispatcher';
 
 export interface IAction {
     sender: any;
@@ -10,17 +11,18 @@ export interface IAction {
     playload: any
 }
 
-export const CallMethod = 'callMethod';
-export const CallProp = 'callProp';
+export const CallMethod = 'onCallMethod';
+export const CallProp = 'onCallProp';
 
 export abstract class Base {
 
     dispatcherStream: Subject<IAction>;
-    componentMap: { [key: string]: Base };
+    componentMap: Map<string, Base> = new Map<string, Base>();
     root: Base = null;
     ancestor: Base = null;
     name: string = uuid();
     childs: Base[] = [];
+    globalEventDispatcher: GlobalEventDispatcher; //只有祖先组件才分配值，其它组件可以直接访问
     constructor( @SkipSelf() @Optional() public parent: Base) {
         this.dispatcherStream = new Subject<IAction>();
         this.dispatcherStream
@@ -29,24 +31,38 @@ export abstract class Base {
                 this.dispatchAction(action);
             });
     }
-
+    /**
+     * 附加组件到父组件
+     */
     attach() {
         if (this.parent) {
             this.root = this.parent.root;
             this.ancestor = this.parent.ancestor;
             this.parent.childs.push(this);
+            if (this.root) {
+                this.root.componentMap.set(this.name, this);
+            }
         }
     }
 
+    /**
+     * 从父组件移除组件
+     */
     dettach() {
         if (this.parent) {
             let idx = this.parent.childs.indexOf(this);
             if (idx > -1) {
                 this.parent.childs.splice(idx, 1);
             }
+
+            if (this.root && this.root.componentMap.has(this.name)) {
+                this.root.componentMap.delete(this.name);
+            }
         }
     }
-
+    /**
+     * 向目标组件发送一个通知
+     */
     notify(action: IAction, targetComp?: Base[] | string | Type) {
         if (isBlank(targetComp)) {
             let compMap = this.getComponentTree();
@@ -54,9 +70,6 @@ export abstract class Base {
                 let target = compMap[key];
                 target.dispatcherStream.next(action);
             }
-            // compMap.forEach((t: Base, index: string, map) => {
-            //     t.dispatcherStream.next(action);
-            // });
         }
         if (isString(targetComp)) {
             let comps = this.getComponentTree();
@@ -67,36 +80,62 @@ export abstract class Base {
         }
     }
 
+    /**
+     * 组件本身的默认通知处理函数，子类可覆写或调用
+     */
     dispatchAction(action: IAction) {
         if (action.type === CallMethod) {
-            console.log(action);
             return this.callMethod(action.playload.method, action.playload.params);
         }
         if (action.type === CallProp) {
             return this.getProperty(action.playload.prop);
         }
     }
+    /**
+     * 全局默认通知处理函数，子类可覆写或调用
+     */
+    globalDispatchAction(action: IAction) {
+        if ((action.target.name === this.name || action.target === this)) {
+            if (action.type === CallMethod) {
+                return this.callMethod(action.playload.method, action.playload.params);
+            }
+            if (action.type === CallProp) {
+                return this.getProperty(action.playload.prop);
+            }
+            if (action.type === 'onMessage') {
+                console.log(this.ancestor.globalEventDispatcher);
+            }
+        }
+    }
 
+    private regFun = (eventArgs) => this.globalDispatchAction(eventArgs);
+    /**
+     * 组件类的默认ngOnInit生命周期
+     */
     ngOnInit() {
         this.attach();
+        if (this.ancestor && this.ancestor.globalEventDispatcher) {
+            this.ancestor.globalEventDispatcher
+                .subscribe('onMessage', this.regFun)
+                .subscribe('onCallMethod', this.regFun)
+                .subscribe('onCallProp', this.regFun);
+        }
     }
-
+    /**
+     * 基类的默认ngOnDestroy生命周期
+     */
     ngOnDestroy() {
         this.dettach();
-    }
-
-    getCompTree() {
-        let expand = (comp: Base): Map<string, Base> => {
-            let dict: Map<string, Base> = new Map<string, Base>();
-            dict[comp.name] = comp;
-            comp.childs.forEach(c => {
-                dict = Object.assign(dict, expand(c));
-            });
-            return dict;
+        if (this.ancestor && this.ancestor.globalEventDispatcher) {
+            this.ancestor.globalEventDispatcher
+                .unSubscribe('onMessage', this.regFun)
+                .unSubscribe('onCallMethod', this.regFun)
+                .unSubscribe('onCallProp', this.regFun);
         }
-        return expand(this);
     }
-
+    /**
+     * 获取组件树
+     */
     getComponentTree() {
         let expand = (comp: Base): { [key: string]: Base } => {
             let dict: { [key: string]: Base } = {};
@@ -106,23 +145,35 @@ export abstract class Base {
             });
             return dict;
         }
-        return this.componentMap = expand(this);
+        return expand(this);
     }
-
+    /**
+     * 递归方式展开对象，并执行相尖的回调函数
+     */
     expand(comp: Base, callback: (comp: Base) => void) {
         callback(comp);
         comp.childs.forEach(c => {
             this.expand(c, callback);
         });
     }
-
+    /**
+     * 设置组件的根组件
+     */
     setRoot() {
-        return this.expand(this, (comp) => { comp.root = this });
+        return this.expand(this, (comp) => {
+            comp.root = this;
+            this.root.componentMap.set(this.name, this);
+        });
     }
+    /**
+     * 设置组件的祖先
+     */
     setAncestor() {
-        return this.expand(this, (comp) => { comp.ancestor = this });
+        return this.expand(this, (comp) => { comp.ancestor = this; });
     }
-
+    /**
+     * 从指定的组件开始向下寻找目标组件
+     */
     findChildComp(comp: string | Type, startComp: Base): Base {
         let result: Base = null;
         if (isString(comp)) {
@@ -152,10 +203,13 @@ export abstract class Base {
 
     findComponent<T extends Base>(comp: string): T {
         let key: string = <string>comp;
-        let findComp = this.getCompTree()[key];
+        let findComp = this.getComponentTree()[key];
         return findComp ? findComp as T : null;
     }
 
+    /**
+     * 从指定的部件开始往上寻找目标组件
+     */
     findComp(comp: string | Type, startComp: Base): Base {
         let result: Base = null;
         if (isString(comp)) {
@@ -205,10 +259,15 @@ export abstract class Base {
         return findComp ? findComp : null;
     }
 
+    /**
+     * 调用方法
+     */
     callMethod(method: string, params?: any[]) {
-        return this.hasOwnProperty(method) ? this[method].call(this, params) : null;
+        return this[method] ? this[method].call(this, params) : null;
     }
-
+    /**
+     * 获取属性
+     */
     getProperty(propertyName: string) {
         return this.hasOwnProperty(propertyName) ? this[propertyName] : null;
     }
@@ -225,6 +284,10 @@ export abstract class Base {
         }
         return null;
     }
+
+    /**
+     * 
+     */
     request(action: IAction, targetComp?: Base[] | string | Type) {
         if (isString(targetComp)) {
             let findComp = this.findComp(targetComp, this) || this.getComponent(targetComp);

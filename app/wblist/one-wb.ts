@@ -28,7 +28,7 @@ export default class OneWB extends Base implements OnInit {
     @Input() oneData: WeiBoModel;
     state: { isComment?: boolean, isForward?: boolean, isCollect?: boolean, isPointGreat?: boolean };
     //  commentFormProps: { imgUrl: string, onAddComment: () => void }
-    constructor( @SkipSelf() @Optional() public parent: Base, private eventService: EventService) {
+    constructor( @SkipSelf() @Optional() public parent: Base) {
         super(parent);
         this.state = { isComment: false, isForward: false, isCollect: false, isPointGreat: false };
     }
@@ -57,7 +57,6 @@ export default class OneWB extends Base implements OnInit {
         console.log(mydict);
         let {a1, b1} = { a1: "baz", b1: 101 };
         super.ngOnInit();
-        this.eventService.subscribe(value => { console.log(value) });
 
     }
     handlerForwardClick(event: Event) {
