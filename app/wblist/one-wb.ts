@@ -6,6 +6,7 @@ import ContentImage  from './ContentImage';
 import {CommentListComponent} from './commentList';
 import {Base, provideTheParent} from '../container/base';
 import {EventService} from '../utils/eventService';
+import { IEventArgs } from '../container/Base';
 
 export interface bbc { b: string[], c: {} }
 interface StringArray {
@@ -37,7 +38,7 @@ export default class OneWB extends Base implements OnInit {
 
     ngOnInit() {
 
-        this.name = 'onewb';
+        // this.name = 'onewb';
         this.treeDict = { 'root': { name: 'root', comp: this, childs: [] } };
         console.log(this);
         // this.commentFormProps = { imgUrl: this.oneData.headUrl, onAddComment: this.addComment };
@@ -57,6 +58,11 @@ export default class OneWB extends Base implements OnInit {
         console.log(mydict);
         let {a1, b1} = { a1: "baz", b1: 101 };
         super.ngOnInit();
+        this.root.eventBus
+            .subscribe('myevent', (actionArgs) => {
+                //  console.log(this.name + "接收到信息:" + actionArgs.playload.msg);
+                this.dispatcherStream.next(actionArgs);
+            });
 
     }
     handlerForwardClick(event: Event) {
@@ -79,6 +85,13 @@ export default class OneWB extends Base implements OnInit {
         }
         else {
             this.state.isComment = false;
+        }
+    }
+
+    dispatchAction(eventArgs: IEventArgs) {
+        super.dispatchAction(eventArgs);
+        if (eventArgs.type === 'myevent' && this.name === eventArgs.playload.parentid) {
+            this.addComment(eventArgs.playload.msg);
         }
     }
 

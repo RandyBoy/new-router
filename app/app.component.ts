@@ -12,8 +12,8 @@ import { Http } from '@angular/http';
 import { Loading } from './loading/loading';
 import { URLSearchParams, QueryEncoder } from '@angular/http';
 import {EventService} from './utils/eventService';
-import {Base, IAction, CallMethod, CallProp, provideParent, provideTheParent} from './container/base';
-import {GlobalEventDispatcher} from './GlobalEventDispatcher';
+import {Base, IEventArgs, CallMethod, CallProp, provideParent, provideTheParent} from './container/base';
+import {EventBus} from './EventBus';
 
 
 declare var System;
@@ -23,7 +23,7 @@ declare var System;
   selector: 'my-app',
   templateUrl: './app.component.html',
   directives: [ROUTER_DIRECTIVES, COMMON_DIRECTIVES, CollapseDirective, Loading],
-  providers: [HeroService, DialogService, GlobalEventDispatcher, provideTheParent(AppComponent)],
+  providers: [HeroService, DialogService, EventBus, provideTheParent(AppComponent)],
   precompile: [],
   encapsulation: ViewEncapsulation.None
 })
@@ -49,11 +49,11 @@ export class AppComponent extends Base implements OnInit {
     private jwtHelper: JwtHelper,
     private http: Http,
     private _authHttp: AuthHttp,
-    globalEventDispatch: GlobalEventDispatcher
+    _eventBus: EventBus
   ) {
     super(null);
     this.ancestor = this;
-    this.ged = globalEventDispatch;
+    this.eventBus = _eventBus;
     this.name = "mainapp";
     this.name2 = this.router.routerState.queryParams.map(p => p['name']);
     this.token = this.router.routerState.queryParams.map(p => p['token']);

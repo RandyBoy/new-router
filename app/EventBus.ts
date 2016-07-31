@@ -1,19 +1,19 @@
 import {Injectable} from '@angular/core'
 import {Subject}    from 'rxjs/Subject';
-import {IAction} from './container/base';
+import {IEventArgs} from './container/base';
 
 @Injectable()
-export class GlobalEventDispatcher {
-    private _globalEvent = new Subject<IAction>();
-    private _globalEventStream$ = this._globalEvent.asObservable();
+export class EventBus {
+    private _globalEvent = new Subject<IEventArgs>();
+    private _eventBusStream$ = this._globalEvent.asObservable();
 
     private _subscriptions: Map<string, Array<Function>> = new Map<string, Array<Function>>();
 
     constructor() {
-        this._globalEventStream$.subscribe((eventArgs) => this._onEvent(eventArgs));
+        this._eventBusStream$.subscribe((eventArgs) => this._onEvent(eventArgs));
     }
 
-    notify(eventArgs: IAction): this {
+    post(eventArgs: IEventArgs): this {
 
         let current = this._globalEvent[eventArgs.type];
         if (current != eventArgs) {
@@ -43,7 +43,7 @@ export class GlobalEventDispatcher {
         return this;
     }
 
-    private _onEvent(eventArgs: IAction) {
+    private _onEvent(eventArgs: IEventArgs) {
         let subscribers = this._subscriptions.get(eventArgs.type) || [];
 
         subscribers.forEach((callback) => { 

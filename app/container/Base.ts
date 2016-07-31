@@ -2,11 +2,11 @@ import {provide, forwardRef, Optional, SkipSelf, Type, ReflectiveInjector} from 
 import {isType, isString, isBlank, isArray} from "@angular/common/src/facade/lang";
 import uuid from '../utils/uuid';
 import {Subject} from 'rxjs/rx';
-import {GlobalEventDispatcher} from '../GlobalEventDispatcher';
+import {EventBus} from '../EventBus';
 
-export interface IAction {
-    sender: any;
-    target: any;
+export interface IEventArgs {
+    sender?: any;
+    target?: any;
     type: string;
     playload: any
 }
@@ -16,18 +16,20 @@ export const CallProp = 'onCallProp';
 
 export abstract class Base {
 
-    dispatcherStream: Subject<IAction>;
+    dispatcherStream: Subject<IEventArgs>;
     componentMap: Map<string, Base> = new Map<string, Base>();
     root: Base = null;
     ancestor: Base = null;
     name: string = uuid();
     childs: Base[] = [];
-    ged: GlobalEventDispatcher; //只有祖先组件才分配值，其它组件可以直接访问
+    eventBus: EventBus; //只有祖先组件才分配值，其它组件可以直接访问
     constructor( @SkipSelf() @Optional() public parent: Base) {
-        this.dispatcherStream = new Subject<IAction>();
+        this.dispatcherStream = new Subject<IEventArgs>();
         this.dispatcherStream
-            .filter(msg => (msg.target.name === this.name || msg.target === this))
-            .subscribe(action => { // && (msg.sender != this || msg.sender.name != this.name)      
+            // .filter(args => {
+            //     return () => args.playload.filter(args);
+            // })
+            .subscribe(action => { // && (msg.sender != this || msg.sender.name != this.name)      //msg => (msg.target.name === this.name || msg.target === this))
                 this.dispatchAction(action);
             });
     }
@@ -63,7 +65,7 @@ export abstract class Base {
     /**
      * 向目标组件发送一个通知
      */
-    notify(action: IAction, targetComp?: Base[] | string | Type) {
+    notify(action: IEventArgs, targetComp?: Base[] | string | Type) {
         if (isBlank(targetComp)) {
             let compMap = this.getComponentTree();
             for (let key in compMap) {
@@ -83,39 +85,40 @@ export abstract class Base {
     /**
      * 组件本身的默认通知处理函数，子类可覆写或调用
      */
-    dispatchAction(action: IAction) {
-        if (action.type === CallMethod) {
-            return this.callMethod(action.playload.method, action.playload.params);
-        }
-        if (action.type === CallProp) {
-            return this.getProperty(action.playload.prop);
+    dispatchAction(eventArgs: IEventArgs) {
+        switch (eventArgs.type) {
+            case CallMethod:
+                return this.callMethod(eventArgs.playload.method, eventArgs.playload.params);
+                break;
+            case CallProp:
+                return this.getProperty(eventArgs.playload.prop);
+            default:
+                break;
         }
     }
     /**
      * 全局默认通知处理函数，子类可覆写或调用
      */
-    globalDispatchAction(action: IAction) {
-        if ((action.target.name === this.name || action.target === this)) {
-            if (action.type === CallMethod) {
-                return this.callMethod(action.playload.method, action.playload.params);
-            }
-            if (action.type === CallProp) {
-                return this.getProperty(action.playload.prop);
-            }
-            if (action.type === 'onMessage') {
-                console.log(this.ancestor.ged);
-            }
+    eventBusHandler(eventArgs: IEventArgs) {
+        switch (eventArgs.type) {
+            case CallMethod:
+                return this.callMethod(eventArgs.playload.method, eventArgs.playload.params);
+                break;
+            case CallProp:
+                return this.getProperty(eventArgs.playload.prop);
+            default:
+                break;
         }
     }
 
-    private regFun = (eventArgs) => this.globalDispatchAction(eventArgs);
+    private regFun = (eventArgs) => this.dispatcherStream.next(eventArgs); // this.eventBusHandler(eventArgs)
     /**
      * 组件类的默认ngOnInit生命周期
      */
     ngOnInit() {
         this.attach();
-        if (this.ancestor && this.ancestor.ged) {
-            this.ancestor.ged
+        if (this.ancestor && this.ancestor.eventBus) {
+            this.ancestor.eventBus
                 .subscribe('onMessage', this.regFun)
                 .subscribe('onCallMethod', this.regFun)
                 .subscribe('onCallProp', this.regFun);
@@ -126,8 +129,8 @@ export abstract class Base {
      */
     ngOnDestroy() {
         this.dettach();
-        if (this.ancestor && this.ancestor.ged) {
-            this.ancestor.ged
+        if (this.ancestor && this.ancestor.eventBus) {
+            this.ancestor.eventBus
                 .unSubscribe('onMessage', this.regFun)
                 .unSubscribe('onCallMethod', this.regFun)
                 .unSubscribe('onCallProp', this.regFun);
@@ -288,7 +291,7 @@ export abstract class Base {
     /**
      * 
      */
-    request(action: IAction, targetComp?: Base[] | string | Type) {
+    request(action: IEventArgs, targetComp?: Base[] | string | Type) {
         if (isString(targetComp)) {
             let findComp = this.findComp(targetComp, this) || this.getComponent(targetComp);
             if (action.type === CallMethod) {
