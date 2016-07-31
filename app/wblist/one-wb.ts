@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewEncapsulation, SkipSelf, Optional} from '@angular/core';
+import { Component, OnInit, Input, ViewEncapsulation, SkipSelf, Optional, OnDestroy} from '@angular/core';
 import { NgIf } from '@angular/common';
 import { WeiBoModel } from './wbModel';
 import CommentForm  from './CommentForm';
@@ -7,6 +7,7 @@ import {CommentListComponent} from './commentList';
 import {Base, provideTheParent} from '../container/base';
 import {EventService} from '../utils/eventService';
 import { IEventArgs } from '../container/Base';
+import * as WbEventType  from './wbEventType';
 
 export interface bbc { b: string[], c: {} }
 interface StringArray {
@@ -36,34 +37,40 @@ export default class OneWB extends Base implements OnInit {
 
     treeDict: { [key: string]: { name: string, comp: any, childs: any[] } };
 
+    subscribies = [WbEventType.AddComment, WbEventType.DelComment];
+
     ngOnInit() {
 
         // this.name = 'onewb';
-        this.treeDict = { 'root': { name: 'root', comp: this, childs: [] } };
-        console.log(this);
-        // this.commentFormProps = { imgUrl: this.oneData.headUrl, onAddComment: this.addComment };
-        let a = { a: 'b', b: ['a', 'b', 'c'], c: { c1: 'ab', c2: [1, 2] } };
-        let result = copy({ b: [], c: {} } as bbc, a);
-        let x = { a: 1, b: 2, c: 3, d: 4, f: 50 };
+        // this.treeDict = { 'root': { name: 'root', comp: this, childs: [] } };
+        // console.log(this);
+        // // this.commentFormProps = { imgUrl: this.oneData.headUrl, onAddComment: this.addComment };
+        // let a = { a: 'b', b: ['a', 'b', 'c'], c: { c1: 'ab', c2: [1, 2] } };
+        // let result = copy({ b: [], c: {} } as bbc, a);
+        // let x = { a: 1, b: 2, c: 3, d: 4, f: 50 };
 
-        let copyField = copyFields({ b: [], c: {} } as bbc, a); // okay
-        console.log(copyField);
-        console.log(result);
-        let myArray: StringArray;
-        myArray = { 0: "Bob", 1: "Fred" }; // ["Bob", "Fred"];
-        console.log(myArray[0]);
-        console.log(myArray);
-        let mydict: NumberDictionary;
-        mydict = { 'abc': 1, 'def': 2, length: 3 };
-        console.log(mydict);
-        let {a1, b1} = { a1: "baz", b1: 101 };
+        // let copyField = copyFields({ b: [], c: {} } as bbc, a); // okay
+        // console.log(copyField);
+        // console.log(result);
+        // let myArray: StringArray;
+        // myArray = { 0: "Bob", 1: "Fred" }; // ["Bob", "Fred"];
+        // console.log(myArray[0]);
+        // console.log(myArray);
+        // let mydict: NumberDictionary;
+        // mydict = { 'abc': 1, 'def': 2, length: 3 };
+        // console.log(mydict);
+        // let {a1, b1} = { a1: "baz", b1: 101 };
         super.ngOnInit();
-        this.root.eventBus
-            .subscribe('myevent', (actionArgs) => {
-                //  console.log(this.name + "接收到信息:" + actionArgs.playload.msg);
-                this.dispatcherStream.next(actionArgs);
-            });
+        this.root
+            .eventBus
+            .subscribe(this.subscribies, this.regFun);
+    }
 
+    ngOnDestroy() {
+        super.ngOnDestroy();
+        this.root
+            .eventBus
+            .unSubscribe(this.subscribies, this.regFun);
     }
     handlerForwardClick(event: Event) {
         let innerText = (event.target as HTMLElement).innerText;
@@ -90,8 +97,12 @@ export default class OneWB extends Base implements OnInit {
 
     dispatchAction(eventArgs: IEventArgs) {
         super.dispatchAction(eventArgs);
-        if (eventArgs.type === 'myevent' && this.name === eventArgs.playload.parentid) {
-            this.addComment(eventArgs.playload.msg);
+        if (this.name === eventArgs.playload.wbid) {
+            if (eventArgs.type === WbEventType.AddComment) {
+                this.addComment(eventArgs.playload.msg);
+            } else if (eventArgs.type === WbEventType.DelComment) {
+                this.delComment(eventArgs.playload.msg);
+            }
         }
     }
 

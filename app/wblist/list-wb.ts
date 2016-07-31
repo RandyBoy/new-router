@@ -4,6 +4,7 @@ import OneWB  from './one-wb';
 import {WeiBoStore} from './wbstore';
 import {Base, provideTheParent} from '../container/base';
 import { EventBus } from '../EventBus';
+import * as wbEventType from './wbEventType';
 
 @Component({
     moduleId: module.id,
@@ -28,8 +29,11 @@ export class ListWb extends Base implements OnInit, AfterViewInit {
         this.attach();
         this.setRoot();
         this.eventBus
-            .subscribe('myevent', (actionArgs) => {
-                console.log("listwb接收到信息:" + actionArgs.playload.msg);
+            .subscribe(wbEventType.AddComment, (actionArgs) => {
+                console.log("listwb接收到wb.AddComment事件信息:" + actionArgs.playload.msg);
+            })
+            .subscribe(wbEventType.DelComment, (args) => {
+                console.log("listwb接收到wb.DelComment事件信息:" + args.playload.msg);
             });
     }
     ngOnDestroy() {

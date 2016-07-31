@@ -62,6 +62,7 @@ export abstract class Base {
             }
         }
     }
+    // regFun = (actionArgs) => { this.dispatcherStream.next(actionArgs) };
     /**
      * 向目标组件发送一个通知
      */
@@ -89,7 +90,7 @@ export abstract class Base {
         switch (eventArgs.type) {
             case CallMethod:
                 return this.callMethod(eventArgs.playload.method, eventArgs.playload.params);
-                break;
+            // break;
             case CallProp:
                 return this.getProperty(eventArgs.playload.prop);
             default:
@@ -103,7 +104,7 @@ export abstract class Base {
         switch (eventArgs.type) {
             case CallMethod:
                 return this.callMethod(eventArgs.playload.method, eventArgs.playload.params);
-                break;
+            // break;
             case CallProp:
                 return this.getProperty(eventArgs.playload.prop);
             default:
@@ -111,7 +112,7 @@ export abstract class Base {
         }
     }
 
-    private regFun = (eventArgs) => this.dispatcherStream.next(eventArgs); // this.eventBusHandler(eventArgs)
+    regFun = (eventArgs) => this.dispatcherStream.next(eventArgs); // this.eventBusHandler(eventArgs)
     /**
      * 组件类的默认ngOnInit生命周期
      */

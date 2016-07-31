@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, ViewEncapsulation, ViewChild, ElementRef, OnDestroy, Host, SkipSelf, Optional} from '@angular/core';
 import {Base, IEventArgs, CallMethod, CallProp} from '../container/base';
 import {AppComponent} from '../app.component';
+import * as  wbEventType  from './wbEventType';
 
 interface CommentFormArgs extends IEventArgs {
     playload: {
@@ -89,10 +90,10 @@ export default class CommentForm extends Base implements OnInit, OnDestroy {
 
         //  this.root.request({ comp: 'onewb', method: 'addComment', params: [comment] });
         this.root.eventBus.post({
-            type: 'myevent',
+            type: wbEventType.AddComment,
             playload: {
                 msg: comment,
-                parentid: this.parent.name,
+                wbid: this.parent.name,
                 filter: (args) => this.name === this.parent.name,
                 callback: () => { }
             }
