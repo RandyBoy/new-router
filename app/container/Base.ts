@@ -4,7 +4,7 @@ import uuid from '../utils/uuid';
 import {Subject} from 'rxjs/rx';
 import {EventBus} from '../EventBus';
 
-export interface IEventArgs {
+export interface IAction {
     sender?: any;
     target?: any;
     type: string;
@@ -16,21 +16,21 @@ export const CallProp = 'onCallProp';
 
 export abstract class Base {
 
-    dispatcherStream: Subject<IEventArgs>;
+    dispatcherStream: Subject<IAction>;
     componentMap: Map<string, Base> = new Map<string, Base>();
     root: Base = null;
-    ancestor: Base = null;
+    context: Base = null;
     name: string = uuid();
     childs: Base[] = [];
     eventBus: EventBus; //只有祖先组件才分配值，其它组件可以直接访问
     constructor( @SkipSelf() @Optional() public parent: Base) {
-        this.dispatcherStream = new Subject<IEventArgs>();
+        this.dispatcherStream = new Subject<IAction>();
         this.dispatcherStream
             // .filter(args => {
             //     return () => args.playload.filter(args);
             // })
             .subscribe(action => { // && (msg.sender != this || msg.sender.name != this.name)      //msg => (msg.target.name === this.name || msg.target === this))
-                this.dispatchAction(action);
+                this.reducer(action);
             });
     }
     /**
@@ -39,7 +39,7 @@ export abstract class Base {
     attach() {
         if (this.parent) {
             this.root = this.parent.root;
-            this.ancestor = this.parent.ancestor;
+            this.context = this.parent.context;
             this.parent.childs.push(this);
             if (this.root) {
                 this.root.componentMap.set(this.name, this);
@@ -66,7 +66,7 @@ export abstract class Base {
     /**
      * 向目标组件发送一个通知
      */
-    notify(action: IEventArgs, targetComp?: Base[] | string | Type) {
+    notify(action: IAction, targetComp?: Base[] | string | Type) {
         if (isBlank(targetComp)) {
             let compMap = this.getComponentTree();
             for (let key in compMap) {
@@ -86,13 +86,13 @@ export abstract class Base {
     /**
      * 组件本身的默认通知处理函数，子类可覆写或调用
      */
-    dispatchAction(eventArgs: IEventArgs) {
-        switch (eventArgs.type) {
+    reducer(action: IAction) {
+        switch (action.type) {
             case CallMethod:
-                return this.callMethod(eventArgs.playload.method, eventArgs.playload.params);
+                return this.callMethod(action.playload.method, action.playload.params);
             // break;
             case CallProp:
-                return this.getProperty(eventArgs.playload.prop);
+                return this.getProperty(action.playload.prop);
             default:
                 break;
         }
@@ -100,7 +100,7 @@ export abstract class Base {
     /**
      * 全局默认通知处理函数，子类可覆写或调用
      */
-    eventBusHandler(eventArgs: IEventArgs) {
+    eventBusHandler(eventArgs: IAction) {
         switch (eventArgs.type) {
             case CallMethod:
                 return this.callMethod(eventArgs.playload.method, eventArgs.playload.params);
@@ -118,11 +118,8 @@ export abstract class Base {
      */
     ngOnInit() {
         this.attach();
-        if (this.ancestor && this.ancestor.eventBus) {
-            this.ancestor.eventBus
-                .subscribe('onMessage', this.regFun)
-                .subscribe('onCallMethod', this.regFun)
-                .subscribe('onCallProp', this.regFun);
+        if (this.context && this.context.eventBus) {
+            this.context.eventBus.subscribe(['onMessage', 'onCallMethod', 'onCallProp'], this.regFun);
         }
     }
     /**
@@ -130,11 +127,11 @@ export abstract class Base {
      */
     ngOnDestroy() {
         this.dettach();
-        if (this.ancestor && this.ancestor.eventBus) {
-            this.ancestor.eventBus
-                .unSubscribe('onMessage', this.regFun)
-                .unSubscribe('onCallMethod', this.regFun)
-                .unSubscribe('onCallProp', this.regFun);
+        if (this.context && this.context.eventBus) {
+
+            this.context
+                .eventBus
+                .unSubscribe(['onMessage', 'onCallMethod', 'onCallProp'], this.regFun);
         }
     }
     /**
@@ -172,8 +169,8 @@ export abstract class Base {
     /**
      * 设置组件的祖先
      */
-    setAncestor() {
-        return this.expand(this, (comp) => { comp.ancestor = this; });
+    setContext() {
+        return this.expand(this, (comp) => { comp.context = this; });
     }
     /**
      * 从指定的组件开始向下寻找目标组件
@@ -292,7 +289,7 @@ export abstract class Base {
     /**
      * 
      */
-    request(action: IEventArgs, targetComp?: Base[] | string | Type) {
+    request(action: IAction, targetComp?: Base[] | string | Type) {
         if (isString(targetComp)) {
             let findComp = this.findComp(targetComp, this) || this.getComponent(targetComp);
             if (action.type === CallMethod) {

@@ -6,7 +6,7 @@ import ContentImage  from './ContentImage';
 import {CommentListComponent} from './commentList';
 import {Base, provideTheParent} from '../container/base';
 import {EventService} from '../utils/eventService';
-import { IEventArgs } from '../container/Base';
+import { IAction } from '../container/Base';
 import * as WbEventType  from './wbEventType';
 
 export interface bbc { b: string[], c: {} }
@@ -95,15 +95,19 @@ export default class OneWB extends Base implements OnInit {
         }
     }
 
-    dispatchAction(eventArgs: IEventArgs) {
-        super.dispatchAction(eventArgs);
-        if (this.name === eventArgs.playload.wbid) {
-            if (eventArgs.type === WbEventType.AddComment) {
-                this.addComment(eventArgs.playload.msg);
-            } else if (eventArgs.type === WbEventType.DelComment) {
-                this.delComment(eventArgs.playload.msg);
+    reducer(action: IAction) {
+        super.reducer(action);
+        if (this.name === action.playload.wbid) {
+            switch (action.type) {
+                case WbEventType.AddComment:
+                    return this.addComment(action.playload.msg);
+                case WbEventType.DelComment:
+                    return this.delComment(action.playload.msg);
+                default:
+                    break;
             }
         }
+        return null;
     }
 
     addComment = (comment: string) => {

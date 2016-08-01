@@ -1,4 +1,5 @@
 export interface WeiBoModel {
+    id:number,
     headUrl: string,
     nickName: string,
     content: string,

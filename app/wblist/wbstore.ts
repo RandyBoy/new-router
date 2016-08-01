@@ -12,6 +12,7 @@ export class WeiBoStore {
     GetALLWeiBo(): WeiBoModel[] {
         return [
             {
+                id: 1,
                 headUrl: 'assets/img/12638218076582.jpg',
                 nickName: 'summer',
                 content: '一些美好的..',
@@ -30,6 +31,7 @@ export class WeiBoStore {
                 comments: []
             },
             {
+                id: 2,
                 headUrl: 'assets/img/12609793551649.jpg',
                 nickName: 'cyan',
                 content: '分享内容',
@@ -45,5 +47,11 @@ export class WeiBoStore {
             }
         ];
     }
+
+    // addComment = (id: number, comment: string) => {
+    //     this.weiBoDatas.comments.push(comment);
+    //     this.oneData.NoComment += 1;
+    //     this.state.isComment = false;
+    // }
 
 }

@@ -1,9 +1,9 @@
 import { Component, OnInit, Input, ViewEncapsulation, ViewChild, ElementRef, OnDestroy, Host, SkipSelf, Optional} from '@angular/core';
-import {Base, IEventArgs, CallMethod, CallProp} from '../container/base';
+import {Base, IAction, CallMethod, CallProp} from '../container/base';
 import {AppComponent} from '../app.component';
 import * as  wbEventType  from './wbEventType';
 
-interface CommentFormArgs extends IEventArgs {
+interface CommentFormArgs extends IAction {
     playload: {
         method: string;
         params: any[];
@@ -35,7 +35,7 @@ export default class CommentForm extends Base implements OnInit, OnDestroy {
 
         // console.log(this.parent.findComponentList(CommentForm));
         console.log(this.root.request({ sender: this, target: this, type: CallProp, playload: { prop: 'root' } }, this.name));
-        console.log(this.ancestor);
+        console.log(this.context);
         // console.log(this.findComp(AppComponent, this));
 
     }
@@ -77,10 +77,10 @@ export default class CommentForm extends Base implements OnInit, OnDestroy {
                 filter: (a) => true
             }
         };
-        this.ancestor
+        this.context
             .eventBus
-            .post(commentArgs)
-            .post({
+            .dispatch(commentArgs)
+            .dispatch({
                 type: 'onMessage',  //类型
                 playload: {
                     method: 'onMessage',
@@ -89,29 +89,40 @@ export default class CommentForm extends Base implements OnInit, OnDestroy {
             });
 
         //  this.root.request({ comp: 'onewb', method: 'addComment', params: [comment] });
-        this.root.eventBus.post({
+        // this.root.eventBus.dispatch({
+        //     type: wbEventType.AddComment,
+        //     playload: {
+        //         msg: comment,
+        //         wbid: this.parent.name,
+        //         filter: (args) => this.name === this.parent.name,
+        //         callback: () => { }
+        //     }
+        // });
+        this.root.eventBus.dispatch({
             type: wbEventType.AddComment,
             playload: {
                 msg: comment,
-                wbid: this.parent.name,
-                filter: (args) => this.name === this.parent.name,
-                callback: () => { }
+                wbid: this.parent.name
             }
-        });
+        }, true);
     }
 
     show(msg: string) {
         console.log("CommentForm:" + msg + this.show.name);
     }
 
-    dispatchAction(action: IEventArgs) {
-        super.dispatchAction(action);
-        if (action.type === 'onMessage') {
-            console.log('OnMessage：' + this.eventBusHandler.name);
+    reducer(action: IAction) {
+        super.reducer(action);
+        switch (action.type) {
+            case 'onMessage':
+                console.log('OnMessage：' + '我怎么会收到信息呢');
+                break;
+            default:
+                break;
         }
     }
 
-    eventBusHandler(action: IEventArgs) {
+    eventBusHandler(action: IAction) {
         for (let index = 0; index < arguments.length; index++) {
             console.log(arguments[index]);
         }

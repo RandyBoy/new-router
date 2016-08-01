@@ -26,15 +26,16 @@ export class ListWb extends Base implements OnInit, AfterViewInit {
     ngOnInit() {
 
         this.wbDatas = this.wbDatas || this.weiBoStore ? this.weiBoStore.GetALLWeiBo() : null;
+        this.weiBoStore.weiBoDatas = this.weiBoStore.GetALLWeiBo();
         this.attach();
         this.setRoot();
         this.eventBus
             .subscribe(wbEventType.AddComment, (actionArgs) => {
                 console.log("listwb接收到wb.AddComment事件信息:" + actionArgs.playload.msg);
-            })
-            .subscribe(wbEventType.DelComment, (args) => {
-                console.log("listwb接收到wb.DelComment事件信息:" + args.playload.msg);
             });
+        this.eventBus.subscribe(wbEventType.DelComment, (args) => {
+            console.log("listwb接收到wb.DelComment事件信息:" + args.playload.msg);
+        });
     }
     ngOnDestroy() {
         this.dettach();
@@ -45,6 +46,10 @@ export class ListWb extends Base implements OnInit, AfterViewInit {
 
     ngAfterContentInit() {
 
+    }
+
+    get wbDataList() {
+        return this.weiBoStore.weiBoDatas || [];
     }
 
 }

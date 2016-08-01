@@ -12,7 +12,7 @@ import { Http } from '@angular/http';
 import { Loading } from './loading/loading';
 import { URLSearchParams, QueryEncoder } from '@angular/http';
 import {EventService} from './utils/eventService';
-import {Base, IEventArgs, CallMethod, CallProp, provideParent, provideTheParent} from './container/base';
+import {Base, IAction, CallMethod, CallProp, provideParent, provideTheParent} from './container/base';
 import {EventBus} from './EventBus';
 
 
@@ -52,7 +52,7 @@ export class AppComponent extends Base implements OnInit {
     _eventBus: EventBus
   ) {
     super(null);
-    this.ancestor = this;
+    this.context = this;
     this.eventBus = _eventBus;
     this.name = "mainapp";
     this.name2 = this.router.routerState.queryParams.map(p => p['name']);
@@ -187,7 +187,7 @@ export class AppComponent extends Base implements OnInit {
   }
 
   ngOnInit() {
-    this.setAncestor();
+    this.setContext();
     // console.log(this.getCompTree());
     //  System.import('app/g').then((dom) => {
     //  console.log(dom);

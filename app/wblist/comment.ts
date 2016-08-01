@@ -26,7 +26,7 @@ export class CommentComponent extends Base implements OnInit {
     }
 
     delComment(comment: string) {
-        this.root.eventBus.post({
+        this.root.eventBus.dispatch({
             type: wbEventType.DelComment,
             playload: {
                 wbid: this.parent.parent.name,
