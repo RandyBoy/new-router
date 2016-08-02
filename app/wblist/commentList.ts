@@ -1,15 +1,17 @@
-import { Component, OnInit, Input, OnDestroy,SkipSelf,Host,Optional} from '@angular/core';
+import { Component, OnInit, Input, OnDestroy, SkipSelf, Host, Optional} from '@angular/core';
 import { NgFor } from '@angular/common';
 import {CommentComponent} from './comment';
-import {Base,provideTheParent} from '../container/base';
+import {Base, provideTheParent} from '../container/base';
+import {CreateClearComment} from './wbActions';
 
 @Component({
     moduleId: module.id,
     selector: 'CommentList',
     directives: [CommentComponent, NgFor],
-    providers:[provideTheParent(CommentListComponent)]
+    providers: [provideTheParent(CommentListComponent)]
     ,
     template: ` <div>
+                  <span><button on-click="clearComments()" >清除</button></span>
                   <ul>
                     <li *ngFor="let comment of commentModel.comments" >
                        <Comment bind-comment="commentProp(comment)"></Comment>
@@ -27,14 +29,15 @@ export class CommentListComponent extends Base implements OnInit, OnDestroy {
         this.commentModel = this.commentModel || { comments: [] };
     }
     ngOnInit() {
+        super.ngOnInit();
         // console.log(this.context);
         // this.context.treeDict['commentlist'] = { name: "commentlist", comp: this, childs: [] };
-            this.attach();  
-       // this.parent.childs.push(this);
+
+        // this.parent.childs.push(this);
     }
     ngOnDestroy() {
- 
-            this.dettach();
+
+        super.ngOnDestroy();
     }
 
     commentProp(content: string) {
@@ -43,6 +46,11 @@ export class CommentListComponent extends Base implements OnInit, OnDestroy {
             onDelComment: this.commentModel.onDelComment
         }
     }
+    
+    clearComments() {
+        this.parent.dispatch(CreateClearComment());
+    }
+
     show(msg: string) {
         console.log("CommentList:" + msg);
     }

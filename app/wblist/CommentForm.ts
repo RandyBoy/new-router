@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, ViewEncapsulation, ViewChild, ElementRef, OnDestroy, Host, SkipSelf, Optional} from '@angular/core';
 import {Base, IAction, CallMethod, CallProp} from '../container/base';
 import {AppComponent} from '../app.component';
-import * as  wbEventType  from './wbEventType';
+import {CreateAddComment} from './wbActions';
 
 interface CommentFormArgs extends IAction {
     playload: {
@@ -18,9 +18,11 @@ interface CommentFormArgs extends IAction {
     templateUrl: 'comment-form.html'
 })
 export default class CommentForm extends Base implements OnInit, OnDestroy {
+    
+    @Input("comment") commentValue:string;
     @Input() props: { imgUrl: string, onAddComment: (content: string) => void };
-    @Input() context: {};
-    @ViewChild('comment') comment: ElementRef;
+    // @Input() context: {};
+    @ViewChild('comment') comment2: ElementRef;
     constructor( @Optional() @SkipSelf() public parent: Base) {
         super(parent);
         // this.props = this.props || { imgUrl: 'null', onAddComment: () => { } };
@@ -52,15 +54,15 @@ export default class CommentForm extends Base implements OnInit, OnDestroy {
 
         // this.root.request({ type: CallMethod, playload: { method: 'addComment2', params: [comment] } }, this.root.name);
 
-        this.root.notify({
-            sender: this,
-            target: 'abc',
-            type: CallMethod,
-            playload: {
-                method: 'show',
-                params: ['通知方式调用']
-            }
-        }, this.name);
+        // this.root.notify({
+        //     sender: this,
+        //     target: 'abc',
+        //     type: CallMethod,
+        //     playload: {
+        //         method: 'show',
+        //         params: ['通知方式调用']
+        //     }
+        // }, this.name);
         //{
         // type: CallMethod,
         // playload: {
@@ -68,25 +70,26 @@ export default class CommentForm extends Base implements OnInit, OnDestroy {
         //     params: ['全局通知方式调用-globalEvent']
         // }
 
-        let commentArgs: CommentFormArgs = {
-            type: CallMethod,
-            playload: {
-                method: 'show',
-                params: ['自定义事件参数'],
-                extra: (a) => { a.id === 15 },
-                filter: (a) => true
-            }
-        };
-        this.context
-            .eventBus
-            .dispatch(commentArgs)
-            .dispatch({
-                type: 'onMessage',  //类型
-                playload: {
-                    method: 'onMessage',
-                    params: ['通知方式调用']
-                }
-            });
+        // let commentArgs: CommentFormArgs = {
+        //     type: CallMethod,
+        //     playload: {
+        //         method: 'show',
+        //         params: ['自定义事件参数'],
+        //         extra: (a) => { a.id === 15 },
+        //         filter: (a) => true
+        //     }
+        // };
+        // this.context
+        //     .eventBus
+        //     .dispatch(commentArgs)
+        //     .dispatch({
+        //         type: 'onMessage',  //类型
+        //         playload: {
+        //             method: 'onMessage',
+        //             params: ['通知方式调用']
+        //         }
+        //     });
+        // this.context.dispatch(commentArgs);
 
         //  this.root.request({ comp: 'onewb', method: 'addComment', params: [comment] });
         // this.root.eventBus.dispatch({
@@ -98,13 +101,16 @@ export default class CommentForm extends Base implements OnInit, OnDestroy {
         //         callback: () => { }
         //     }
         // });
-        this.root.eventBus.dispatch({
-            type: wbEventType.AddComment,
-            playload: {
-                msg: comment,
-                wbid: this.parent.name
-            }
-        }, true);
+
+        // this.root.eventBus.dispatch({
+        //     type: wbEventType.AddComment,
+        //     playload: {
+        //         msg: comment,
+        //         wbid: this.parent.name
+        //     }
+        // }, true);
+
+        this.parent.dispatch(CreateAddComment(comment));
     }
 
     show(msg: string) {

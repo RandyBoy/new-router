@@ -8,6 +8,8 @@ import {Base, provideTheParent} from '../container/base';
 import {EventService} from '../utils/eventService';
 import { IAction } from '../container/Base';
 import * as WbEventType  from './wbEventType';
+import {wbState} from './wbState';
+import {wbReducer} from './wbReducer';
 
 export interface bbc { b: string[], c: {} }
 interface StringArray {
@@ -23,21 +25,41 @@ interface NumberDictionary {
     selector: 'one-wb',
     templateUrl: 'onewb.html',
     directives: [CommentForm, ContentImage, NgIf, CommentListComponent],
-    providers: [provideTheParent(OneWB)],
+    providers: [provideTheParent(OneWB), wbState],
 })
 export default class OneWB extends Base implements OnInit {
 
-    @Input() oneData: WeiBoModel;
-    state: { isComment?: boolean, isForward?: boolean, isCollect?: boolean, isPointGreat?: boolean };
+    // oneData: WeiBoModel;
+    // state: { isComment?: boolean, isForward?: boolean, isCollect?: boolean, isPointGreat?: boolean };
     //  commentFormProps: { imgUrl: string, onAddComment: () => void }
-    constructor( @SkipSelf() @Optional() public parent: Base) {
+    constructor( @SkipSelf() @Optional() public parent: Base, private wbState: wbState) {
         super(parent);
-        this.state = { isComment: false, isForward: false, isCollect: false, isPointGreat: false };
+        //  this.state = { isComment: false, isForward: false, isCollect: false, isPointGreat: false };
     }
 
     treeDict: { [key: string]: { name: string, comp: any, childs: any[] } };
 
     subscribies = [WbEventType.AddComment, WbEventType.DelComment];
+
+
+    @Input() public set oneData(value: WeiBoModel) {
+        if (this.wbState.wbData != value) {
+            this.wbState.wbData = value;
+        }
+    }
+
+    public get oneData(): WeiBoModel {
+        return this.wbState.wbData;
+    }
+
+    public get state() {
+        return this.wbState;
+    }
+     
+     get comment(){
+         return this.state.currentComment;
+     }
+
 
     ngOnInit() {
 
@@ -61,21 +83,19 @@ export default class OneWB extends Base implements OnInit {
         // console.log(mydict);
         // let {a1, b1} = { a1: "baz", b1: 101 };
         super.ngOnInit();
-        this.root
-            .eventBus
-            .subscribe(this.subscribies, this.regFun);
+        // this.eventBus //root
+        //     .subscribe(this.subscribies, this.regFun);
     }
 
     ngOnDestroy() {
         super.ngOnDestroy();
-        this.root
-            .eventBus
-            .unSubscribe(this.subscribies, this.regFun);
+        // this.eventBus //root
+        //     .unSubscribe(this.subscribies, this.regFun);
     }
     handlerForwardClick(event: Event) {
         let innerText = (event.target as HTMLElement).innerText;
         if (innerText == '评论') {
-            this.state.isComment = !this.state.isComment;
+           this.openComment();
         } else if (innerText == '赞') {
             this.oneData.NoPointGreat += 1;
             this.state.isPointGreat = !this.state.isPointGreat;
@@ -97,18 +117,12 @@ export default class OneWB extends Base implements OnInit {
 
     reducer(action: IAction) {
         super.reducer(action);
-        if (this.name === action.playload.wbid) {
-            switch (action.type) {
-                case WbEventType.AddComment:
-                    return this.addComment(action.playload.msg);
-                case WbEventType.DelComment:
-                    return this.delComment(action.playload.msg);
-                default:
-                    break;
-            }
-        }
-        return null;
+        wbReducer(this.wbState, action);
     }
+    openComment() {
+       this.wbState.openComment();
+    }
+
 
     addComment = (comment: string) => {
         this.oneData.comments.push(comment);

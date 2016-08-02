@@ -47,11 +47,6 @@ export class WeiBoStore {
             }
         ];
     }
-
-    // addComment = (id: number, comment: string) => {
-    //     this.weiBoDatas.comments.push(comment);
-    //     this.oneData.NoComment += 1;
-    //     this.state.isComment = false;
-    // }
+  
 
 }

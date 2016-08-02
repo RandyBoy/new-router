@@ -21,6 +21,6 @@
             </ul>
         </div>
         <CommentList #commentlist  bind-commentModel="commentListProps"></CommentList> 
-        <comment-form #commentform  *ngIf="state?.isComment" [props] = "commentFormProps"> </comment-form>
+        <comment-form #commentform  *ngIf="state?.isComment" [comment]='comment' [props] = "commentFormProps"> </comment-form>
     </div>
 </div>

@@ -13,7 +13,6 @@ import { Loading } from './loading/loading';
 import { URLSearchParams, QueryEncoder } from '@angular/http';
 import {EventService} from './utils/eventService';
 import {Base, IAction, CallMethod, CallProp, provideParent, provideTheParent} from './container/base';
-import {EventBus} from './EventBus';
 
 
 declare var System;
@@ -23,7 +22,7 @@ declare var System;
   selector: 'my-app',
   templateUrl: './app.component.html',
   directives: [ROUTER_DIRECTIVES, COMMON_DIRECTIVES, CollapseDirective, Loading],
-  providers: [HeroService, DialogService, EventBus, provideTheParent(AppComponent)],
+  providers: [HeroService, DialogService, provideTheParent(AppComponent)],
   precompile: [],
   encapsulation: ViewEncapsulation.None
 })
@@ -48,12 +47,10 @@ export class AppComponent extends Base implements OnInit {
     private authService: AuthService,
     private jwtHelper: JwtHelper,
     private http: Http,
-    private _authHttp: AuthHttp,
-    _eventBus: EventBus
+    private _authHttp: AuthHttp
   ) {
     super(null);
     this.context = this;
-    this.eventBus = _eventBus;
     this.name = "mainapp";
     this.name2 = this.router.routerState.queryParams.map(p => p['name']);
     this.token = this.router.routerState.queryParams.map(p => p['token']);

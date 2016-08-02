@@ -1,6 +1,6 @@
 export const AddComment = "AddComment";
 export const DelComment = "DelComment"
 export const ClearComments = "ClearComments";
-export function addComment(playload) {
-    return { type: AddComment, playload: playload };
-}
+export const OpenComment = "OpentComment";
+export const SaveComment = "SaveComment";
+export const SetComment = "SetComment";

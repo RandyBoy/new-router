@@ -28,9 +28,6 @@ export class EventBus {
         // if (this.isDispatching) {
         //     throw new Error('Reducers may not dispatch actions.')
         // }
-        if (dispatchAll) {
-            return this.broadcast(action);
-        }
         // try {
         //     this.isDispatching = true
         //     // currentState = currentReducer(currentState, action)
@@ -40,17 +37,6 @@ export class EventBus {
         let current = this._globalEvent[action.type];
         if (current != action) {
             this._globalEvent[action.type] = action;
-
-            this._globalEvent.next(action);
-        }
-        return this;
-    }
-
-    private broadcast(action: IAction) {
-        let current = this._globalEvent["onMessage"];
-        if (current != action) {
-            this._globalEvent["onMessage"] = action;
-
             this._globalEvent.next(action);
         }
         return this;
@@ -108,8 +94,7 @@ export class EventBus {
     }
 
     private _onEvent(action: IAction) {
-        let subscribers = this._subscriptions.get(action.type) || [];
-
+        let subscribers = this._subscriptions.get(action.type) || this._subscriptions.get('onMessage') || [];
         subscribers.forEach((callback) => {
             callback.call(null, action);
         });

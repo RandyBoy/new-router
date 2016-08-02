@@ -1,12 +1,14 @@
 import { Component, OnInit, Input, OnDestroy, Host, SkipSelf, Optional} from '@angular/core';
 import { Base } from '../container/base';
-import * as wbEventType from './wbEventType';
+import {CreateDelComment, CreateSetComment} from './wbActions';
 
 @Component({
     moduleId: module.id,
     selector: 'Comment',
     template: `           
-             {{comment.content}} <span><button on-click="delComment(comment.content)" >X</button></span>
+             {{comment.content}} 
+             <span><button on-click="delComment(comment.content)" >del</button></span>
+             <span><button on-click="editComment()" >edit</button></span>
     `
 })
 export class CommentComponent extends Base implements OnInit {
@@ -17,22 +19,19 @@ export class CommentComponent extends Base implements OnInit {
     }
 
     ngOnInit() {
-        this.attach();
+        super.ngOnInit();
         // console.log(this.root.findComponentList(CommentComponent)); comment.onDelComment(comment.content)
     }
 
     ngOnDestroy() {
-        this.dettach();
+        super.ngOnDestroy();
+    }
+    delComment(comment: string) {
+        this.parent.parent.dispatch(CreateDelComment(comment));
     }
 
-    delComment(comment: string) {
-        this.root.eventBus.dispatch({
-            type: wbEventType.DelComment,
-            playload: {
-                wbid: this.parent.parent.name,
-                msg: comment
-            }
-        });
+    editComment() {
+        this.parent.parent.dispatch(CreateSetComment(this.comment.content));
     }
 
 

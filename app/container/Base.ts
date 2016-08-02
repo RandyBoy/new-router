@@ -8,7 +8,7 @@ export interface IAction {
     sender?: any;
     target?: any;
     type: string;
-    playload: any
+    playload: any;
 }
 
 export const CallMethod = 'onCallMethod';
@@ -16,19 +16,15 @@ export const CallProp = 'onCallProp';
 
 export abstract class Base {
 
-    dispatcherStream: Subject<IAction>;
+    dispatcherStream: Subject<IAction> = new Subject<IAction>();
     componentMap: Map<string, Base> = new Map<string, Base>();
     root: Base = null;
     context: Base = null;
     name: string = uuid();
     childs: Base[] = [];
-    eventBus: EventBus; //只有祖先组件才分配值，其它组件可以直接访问
+    eventBus: EventBus = new EventBus(); //只有祖先组件才分配值，其它组件可以直接访问
     constructor( @SkipSelf() @Optional() public parent: Base) {
-        this.dispatcherStream = new Subject<IAction>();
         this.dispatcherStream
-            // .filter(args => {
-            //     return () => args.playload.filter(args);
-            // })
             .subscribe(action => { // && (msg.sender != this || msg.sender.name != this.name)      //msg => (msg.target.name === this.name || msg.target === this))
                 this.reducer(action);
             });
@@ -90,12 +86,56 @@ export abstract class Base {
         switch (action.type) {
             case CallMethod:
                 return this.callMethod(action.playload.method, action.playload.params);
-            // break;
             case CallProp:
                 return this.getProperty(action.playload.prop);
             default:
                 break;
         }
+    }
+    bindActionCreator(actionCreator, dispatch) {
+        return (...args) => dispatch(actionCreator(...args))
+    }
+    /**
+     * 从组件的上下文分发动作消息
+     */
+    dispatch(actionCreator: IAction, extra?: { context?: Base, dispatchAll?: boolean }) {
+
+        let dispatchAll = false;
+        let context: Base = this;
+        if (extra) {
+            if (extra.dispatchAll) {
+                dispatchAll = true;
+            }
+            if (extra.context) {
+                context = extra.context;
+            }
+        }
+        context.eventBus.dispatch(actionCreator, dispatchAll);
+    }
+
+
+    bindActionCreators(actionCreators, dispatch) {
+        if (typeof actionCreators === 'function') {
+            return this.bindActionCreator(actionCreators, dispatch)
+        }
+
+        if (typeof actionCreators !== 'object' || actionCreators === null) {
+            throw new Error(
+                `bindActionCreators expected an object or a function, instead received ${actionCreators === null ? 'null' : typeof actionCreators}. ` +
+                `Did you write "import ActionCreators from" instead of "import * as ActionCreators from"?`
+            )
+        }
+
+        let keys = Object.keys(actionCreators);
+        let boundActionCreators = {}
+        for (let i = 0; i < keys.length; i++) {
+            let key = keys[i]
+            let actionCreator = actionCreators[key]
+            if (typeof actionCreator === 'function') {
+                boundActionCreators[key] = this.bindActionCreator(actionCreator, dispatch);
+            }
+        }
+        return boundActionCreators
     }
     /**
      * 全局默认通知处理函数，子类可覆写或调用
@@ -107,12 +147,13 @@ export abstract class Base {
             // break;
             case CallProp:
                 return this.getProperty(eventArgs.playload.prop);
+
             default:
                 break;
         }
     }
 
-    regFun = (eventArgs) => this.dispatcherStream.next(eventArgs); // this.eventBusHandler(eventArgs)
+    regFun = (actionArgs) => this.dispatcherStream.next(actionArgs); // this.eventBusHandler(eventArgs)
     /**
      * 组件类的默认ngOnInit生命周期
      */
@@ -121,6 +162,7 @@ export abstract class Base {
         if (this.context && this.context.eventBus) {
             this.context.eventBus.subscribe(['onMessage', 'onCallMethod', 'onCallProp'], this.regFun);
         }
+        this.eventBus.subscribe(['onMessage', 'onCallMethod', 'onCallProp'], this.regFun);
     }
     /**
      * 基类的默认ngOnDestroy生命周期
@@ -128,11 +170,12 @@ export abstract class Base {
     ngOnDestroy() {
         this.dettach();
         if (this.context && this.context.eventBus) {
-
             this.context
                 .eventBus
                 .unSubscribe(['onMessage', 'onCallMethod', 'onCallProp'], this.regFun);
         }
+        this.eventBus
+            .unSubscribe(['onMessage', 'onCallMethod', 'onCallProp'], this.regFun);
     }
     /**
      * 获取组件树

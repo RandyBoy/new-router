@@ -3,7 +3,6 @@ import { WeiBoModel  } from './wbmodel';
 import OneWB  from './one-wb';
 import {WeiBoStore} from './wbstore';
 import {Base, provideTheParent} from '../container/base';
-import { EventBus } from '../EventBus';
 import * as wbEventType from './wbEventType';
 
 @Component({
@@ -11,16 +10,15 @@ import * as wbEventType from './wbEventType';
     selector: 'ListWb',
     templateUrl: './listWb.html',
     directives: [OneWB],
-    providers: [WeiBoStore, provideTheParent(ListWb), EventBus],
+    providers: [WeiBoStore, provideTheParent(ListWb)],
     styleUrls: ['./wblist.css'],
     encapsulation: ViewEncapsulation.Native
 })
 export class ListWb extends Base implements OnInit, AfterViewInit {
     @Input() wbDatas: WeiBoModel[] = [];
 
-    constructor( @SkipSelf() @Optional() public parent: Base, private weiBoStore: WeiBoStore, _eventBus: EventBus) {
+    constructor( @SkipSelf() @Optional() public parent: Base, private weiBoStore: WeiBoStore) {
         super(parent);
-        this.eventBus = _eventBus;
     }
 
     ngOnInit() {
