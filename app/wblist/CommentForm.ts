@@ -18,8 +18,8 @@ interface CommentFormArgs extends IAction {
     templateUrl: 'comment-form.html'
 })
 export default class CommentForm extends Base implements OnInit, OnDestroy {
-    
-    @Input("comment") commentValue:string;
+
+    @Input("comment") commentValue: string;
     @Input() props: { imgUrl: string, onAddComment: (content: string) => void };
     // @Input() context: {};
     @ViewChild('comment') comment2: ElementRef;
@@ -109,8 +109,9 @@ export default class CommentForm extends Base implements OnInit, OnDestroy {
         //         wbid: this.parent.name
         //     }
         // }, true);
-
-        this.parent.dispatch(CreateAddComment(comment));
+        let p = this.searchUp(this, (c) => c.eventBus ? true : false);
+        p && p.dispatch(CreateAddComment(comment));
+        //this.parent.dispatch(CreateAddComment(comment));
     }
 
     show(msg: string) {
@@ -128,19 +129,19 @@ export default class CommentForm extends Base implements OnInit, OnDestroy {
         }
     }
 
-    eventBusHandler(action: IAction) {
-        for (let index = 0; index < arguments.length; index++) {
-            console.log(arguments[index]);
-        }
-        super.eventBusHandler(action);
-        if (action.type === 'onMessage') {
-            console.log('OnMessage：' + this.eventBusHandler.name);
-        }
-        let c = getCounter();
-        c(10);
-        c.reset();
-        c.interval = 5.0;
-    }
+    // eventBusHandler(action: IAction) {
+    //     for (let index = 0; index < arguments.length; index++) {
+    //         console.log(arguments[index]);
+    //     }
+    //     super.eventBusHandler(action);
+    //     if (action.type === 'onMessage') {
+    //         console.log('OnMessage：' + this.eventBusHandler.name);
+    //     }
+    //     let c = getCounter();
+    //     c(10);
+    //     c.reset();
+    //     c.interval = 5.0;
+    // }
 }
 
 /**

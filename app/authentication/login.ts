@@ -4,12 +4,12 @@ import { Router, ROUTER_DIRECTIVES, ActivatedRoute } from '@angular/router';
 import { CORE_DIRECTIVES } from '@angular/common';
 import { FORM_DIRECTIVES, REACTIVE_FORM_DIRECTIVES, FormBuilder, FormGroup, Validators, FormControl, ValidatorFn, AbstractControl } from '@angular/forms';
 import {AuthService} from './auth.service';
-import { Observable } from 'rxjs/observable';
+import * as Rx from 'rxjs/rx';
 import { AsyncValidatorFn } from '@angular/forms/src/directives/validators';
 import {FocusDirective  } from '../directives/FocusDirective';
 import {isBlank, isPresent, isPromise, isString} from '@angular/core/src/facade/lang';
 
-import * as Rx from 'rxjs/rx';
+import {BehaviorSubject} from 'rxjs/rx';
 import {dom} from '../utils/dom-service';
 import {Base2} from '../base2';
 
@@ -39,8 +39,8 @@ export class Login extends Base2 {
     });
     //((\\d{11})|^((\\d{7,8})|(\\d{4}|\\d{3})-(\\d{7,8})|(\\d{4}|\\d{3})-(\\d{7,8})-(\\d{4}|\\d{3}|\\d{2}|\\d{1})|(\\d{7,8})-(\\d{4}|\\d{3}|\\d{2}|\\d{1}))$)
 
-    a$: Rx.BehaviorSubject<any> = new Rx.BehaviorSubject<any>(0);
-    b$: Rx.BehaviorSubject<any> = new Rx.BehaviorSubject<any>(0);
+    a$: BehaviorSubject<any> = new BehaviorSubject<any>(0);
+    b$: BehaviorSubject<any> = new BehaviorSubject<any>(0);
     c$: Rx.Observable<any>;
 
 
@@ -145,7 +145,7 @@ export class Login extends Base2 {
         };
     }
 
-    login(event: any, username: any, password: any): Observable<boolean> | boolean {
+    login(event: any, username: any, password: any): Rx.Observable<boolean> | boolean {
         // event.preventDefault();
         this.authService
             .login(username, password)

@@ -1,6 +1,6 @@
-export const AddComment = "AddComment";
-export const DelComment = "DelComment"
-export const ClearComments = "ClearComments";
-export const OpenComment = "OpentComment";
-export const SaveComment = "SaveComment";
-export const SetComment = "SetComment";
+export const AddComment = "addComment";
+export const DelComment = "delComment";
+export const ClearComments = "clearComments";
+export const OpenComment = "opentComment";
+export const SaveComment = "saveComment";
+export const SetComment = "setComment";

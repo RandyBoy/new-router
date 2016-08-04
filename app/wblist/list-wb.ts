@@ -4,28 +4,31 @@ import OneWB  from './one-wb';
 import {WeiBoStore} from './wbstore';
 import {Base, provideTheParent} from '../container/base';
 import * as wbEventType from './wbEventType';
+import {EventBus} from '../EventBus';
 
 @Component({
     moduleId: module.id,
     selector: 'ListWb',
     templateUrl: './listWb.html',
     directives: [OneWB],
-    providers: [WeiBoStore, provideTheParent(ListWb)],
+    providers: [WeiBoStore, provideTheParent(ListWb), EventBus],
     styleUrls: ['./wblist.css'],
     encapsulation: ViewEncapsulation.Native
 })
 export class ListWb extends Base implements OnInit, AfterViewInit {
     @Input() wbDatas: WeiBoModel[] = [];
 
-    constructor( @SkipSelf() @Optional() public parent: Base, private weiBoStore: WeiBoStore) {
+    constructor( @SkipSelf() @Optional() public parent: Base,
+        private weiBoStore: WeiBoStore,
+        public eventBus: EventBus) {
         super(parent);
     }
 
     ngOnInit() {
-
+        super.ngOnInit();
         this.wbDatas = this.wbDatas || this.weiBoStore ? this.weiBoStore.GetALLWeiBo() : null;
         this.weiBoStore.weiBoDatas = this.weiBoStore.GetALLWeiBo();
-        this.attach();
+        // this.attach();
         this.setRoot();
         this.eventBus
             .subscribe(wbEventType.AddComment, (actionArgs) => {
@@ -36,7 +39,8 @@ export class ListWb extends Base implements OnInit, AfterViewInit {
         });
     }
     ngOnDestroy() {
-        this.dettach();
+        super.ngOnDestroy();
+        // this.dettach();
     }
     ngAfterViewInit() {
 

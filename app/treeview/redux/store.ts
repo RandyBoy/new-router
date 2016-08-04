@@ -4,7 +4,7 @@ import {Observable} from 'rxjs/Observable';
 import {Http, Response, Headers} from '@angular/http';
 import {TreeNode} from '../TreeNode';
 import {treeNodeReducer} from './TreeNodeReducer';
-import 'rxjs/rx';
+//import 'rxjs/rx';
 import { AuthHttp, JwtHelper } from 'angular2-jwt';
 // import fs = require('fs');
 

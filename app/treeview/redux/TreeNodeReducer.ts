@@ -1,5 +1,5 @@
 import {TreeNode} from '../TreeNode';
-import 'rxjs/rx';
+// import 'rxjs/rx';
 
 export const treeNodeReducer = (state: any = [], action) => {
     switch (action.name) {

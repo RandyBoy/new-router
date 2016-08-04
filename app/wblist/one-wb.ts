@@ -10,6 +10,7 @@ import { IAction } from '../container/Base';
 import * as WbEventType  from './wbEventType';
 import {wbState} from './wbState';
 import {wbReducer} from './wbReducer';
+import {EventBus} from '../EventBus';
 
 export interface bbc { b: string[], c: {} }
 interface StringArray {
@@ -25,15 +26,16 @@ interface NumberDictionary {
     selector: 'one-wb',
     templateUrl: 'onewb.html',
     directives: [CommentForm, ContentImage, NgIf, CommentListComponent],
-    providers: [provideTheParent(OneWB), wbState],
+    providers: [provideTheParent(OneWB), wbState, EventBus],
 })
 export default class OneWB extends Base implements OnInit {
 
     // oneData: WeiBoModel;
     // state: { isComment?: boolean, isForward?: boolean, isCollect?: boolean, isPointGreat?: boolean };
     //  commentFormProps: { imgUrl: string, onAddComment: () => void }
-    constructor( @SkipSelf() @Optional() public parent: Base, private wbState: wbState) {
+    constructor( @SkipSelf() @Optional() public parent: Base, private stateBase: wbState, public eventBus: EventBus) {
         super(parent);
+        // this.stateBase = this.wbState;
         //  this.state = { isComment: false, isForward: false, isCollect: false, isPointGreat: false };
     }
 
@@ -43,22 +45,22 @@ export default class OneWB extends Base implements OnInit {
 
 
     @Input() public set oneData(value: WeiBoModel) {
-        if (this.wbState.wbData != value) {
-            this.wbState.wbData = value;
+        if (this.stateBase.wbData != value) {
+            this.stateBase.wbData = value;
         }
     }
 
     public get oneData(): WeiBoModel {
-        return this.wbState.wbData;
+        return this.stateBase.wbData;
     }
 
     public get state() {
-        return this.wbState;
+        return this.stateBase;
     }
-     
-     get comment(){
-         return this.state.currentComment;
-     }
+
+    get comment() {
+        return this.state.currentComment;
+    }
 
 
     ngOnInit() {
@@ -95,7 +97,7 @@ export default class OneWB extends Base implements OnInit {
     handlerForwardClick(event: Event) {
         let innerText = (event.target as HTMLElement).innerText;
         if (innerText == '评论') {
-           this.openComment();
+            this.openComment();
         } else if (innerText == '赞') {
             this.oneData.NoPointGreat += 1;
             this.state.isPointGreat = !this.state.isPointGreat;
@@ -117,10 +119,13 @@ export default class OneWB extends Base implements OnInit {
 
     reducer(action: IAction) {
         super.reducer(action);
-        wbReducer(this.wbState, action);
+        // if (this.stateBase) {
+        //     this.stateBase.reducer(action);
+        // }
+        // wbReducer(this.stateBase, action);
     }
     openComment() {
-       this.wbState.openComment();
+        this.stateBase.openComment();
     }
 
 

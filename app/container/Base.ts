@@ -1,8 +1,10 @@
 import {provide, forwardRef, Optional, SkipSelf, Type, ReflectiveInjector} from "@angular/core";
-import {isType, isString, isBlank, isArray} from "@angular/common/src/facade/lang";
+import {isType, isString, isBlank, isArray, isFunction} from "@angular/common/src/facade/lang";
 import uuid from '../utils/uuid';
 import {Subject} from 'rxjs/rx';
 import {EventBus} from '../EventBus';
+import {StoreCenter} from './StoreCenter';
+import {StateBase} from './stateBase';
 
 export interface IAction {
     sender?: any;
@@ -22,7 +24,9 @@ export abstract class Base {
     context: Base = null;
     name: string = uuid();
     childs: Base[] = [];
-    eventBus: EventBus = new EventBus(); //只有祖先组件才分配值，其它组件可以直接访问
+    storeCenter: StoreCenter = new StoreCenter();
+    // private stateBase: StateBase;
+    eventBus: EventBus; //只有祖先组件才分配值，其它组件可以直接访问
     constructor( @SkipSelf() @Optional() public parent: Base) {
         this.dispatcherStream
             .subscribe(action => { // && (msg.sender != this || msg.sender.name != this.name)      //msg => (msg.target.name === this.name || msg.target === this))
@@ -83,6 +87,9 @@ export abstract class Base {
      * 组件本身的默认通知处理函数，子类可覆写或调用
      */
     reducer(action: IAction) {
+        if (this['stateBase']) {
+            this['stateBase'].reducer(action);
+        }
         switch (action.type) {
             case CallMethod:
                 return this.callMethod(action.playload.method, action.playload.params);
@@ -113,7 +120,6 @@ export abstract class Base {
         context.eventBus.dispatch(actionCreator, dispatchAll);
     }
 
-
     bindActionCreators(actionCreators, dispatch) {
         if (typeof actionCreators === 'function') {
             return this.bindActionCreator(actionCreators, dispatch)
@@ -137,21 +143,21 @@ export abstract class Base {
         }
         return boundActionCreators
     }
-    /**
-     * 全局默认通知处理函数，子类可覆写或调用
-     */
-    eventBusHandler(eventArgs: IAction) {
-        switch (eventArgs.type) {
-            case CallMethod:
-                return this.callMethod(eventArgs.playload.method, eventArgs.playload.params);
-            // break;
-            case CallProp:
-                return this.getProperty(eventArgs.playload.prop);
+    // /**
+    //  * 全局默认通知处理函数，子类可覆写或调用,废弃
+    //  */
+    // eventBusHandler(eventArgs: IAction) {
+    //     switch (eventArgs.type) {
+    //         case CallMethod:
+    //             return this.callMethod(eventArgs.playload.method, eventArgs.playload.params);
+    //         // break;
+    //         case CallProp:
+    //             return this.getProperty(eventArgs.playload.prop);
 
-            default:
-                break;
-        }
-    }
+    //         default:
+    //             break;
+    //     }
+    // }
 
     regFun = (actionArgs) => this.dispatcherStream.next(actionArgs); // this.eventBusHandler(eventArgs)
     /**
@@ -162,7 +168,13 @@ export abstract class Base {
         if (this.context && this.context.eventBus) {
             this.context.eventBus.subscribe(['onMessage', 'onCallMethod', 'onCallProp'], this.regFun);
         }
-        this.eventBus.subscribe(['onMessage', 'onCallMethod', 'onCallProp'], this.regFun);
+        if (this.root && this.root.eventBus) {
+            this.root.eventBus.subscribe(['onMessage', 'onCallMethod', 'onCallProp'], this.regFun);
+        }
+        if (this.eventBus) {
+            this.eventBus.subscribe(['onMessage', 'onCallMethod', 'onCallProp'], this.regFun);
+        }
+
     }
     /**
      * 基类的默认ngOnDestroy生命周期
@@ -170,12 +182,15 @@ export abstract class Base {
     ngOnDestroy() {
         this.dettach();
         if (this.context && this.context.eventBus) {
-            this.context
-                .eventBus
-                .unSubscribe(['onMessage', 'onCallMethod', 'onCallProp'], this.regFun);
+            this.context.eventBus.unSubscribe(['onMessage', 'onCallMethod', 'onCallProp'], this.regFun);
         }
-        this.eventBus
-            .unSubscribe(['onMessage', 'onCallMethod', 'onCallProp'], this.regFun);
+        if (this.root && this.root.eventBus) {
+            this.root.eventBus.unSubscribe(['onMessage', 'onCallMethod', 'onCallProp'], this.regFun);
+        }
+        if (this.eventBus) {
+            this.eventBus.unSubscribe(['onMessage', 'onCallMethod', 'onCallProp'], this.regFun);
+        }
+
     }
     /**
      * 获取组件树
@@ -249,6 +264,30 @@ export abstract class Base {
         let key: string = <string>comp;
         let findComp = this.getComponentTree()[key];
         return findComp ? findComp as T : null;
+    }
+    /**
+     * 根据指定的条件向上查找组件
+     */
+    searchUp(startComp: Base, predicate: (comp: Base) => boolean): Base {
+        let result: Base = null;
+        if (predicate(startComp)) {
+            return result = startComp;
+        }
+        result = this.searchUp(startComp.parent, predicate);
+        if (result) return result;
+        return result;
+    }
+    searchDown(startComp: Base, predicate: (comp: Base) => boolean): Base {
+        let result: Base = null;
+        result = predicate(startComp) ? startComp : null || startComp.childs.filter(predicate)[0];
+        if (result) return result;
+        startComp.childs.forEach(element => {
+            element.childs.forEach(element => {
+                result = this.searchDown(element, predicate);
+                if (result) return result;
+            });
+        });
+        return result;
     }
 
     /**

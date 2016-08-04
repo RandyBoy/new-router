@@ -27,7 +27,9 @@ export class CommentComponent extends Base implements OnInit {
         super.ngOnDestroy();
     }
     delComment(comment: string) {
-        this.parent.parent.dispatch(CreateDelComment(comment));
+        // this.parent.parent
+        this.searchUp(this, (c) => c.eventBus ? true : false)
+            .dispatch(CreateDelComment(comment));
     }
 
     editComment() {

@@ -13,6 +13,6 @@ export function wbReducer(state: wbState, action: IAction) {
         case WbEventType.SetComment:
             return state.editComment(action.playload.comment);
         default:
-            break;
+            break;      
     }
 }
